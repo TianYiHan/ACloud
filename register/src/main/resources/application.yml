@@ -1,0 +1,29 @@
+server:
+  port: 8761
+spring:
+  application:
+    name: eureka-server
+  security:
+    user:
+      name: name
+      password: password
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+
+
+#  server.port=8761
+#  spring.application.name=eureka-server
+#  eureka.instance.hostname=localhost
+#  eureka.client.fetch-registry=false
+#  eureka.client.register-with-eureka=false
+#  #关闭自我保护 详见》www.cnblogs.com/breath-taking/articles/7940364.html
+#  eureka.server.enableSelfPreservation=false
+#  #开启安全认证 用户名和密码
+#  spring.security.basic.enabled=true
+#  spring.security.user.name=name
+#  spring.security.user.password=password
