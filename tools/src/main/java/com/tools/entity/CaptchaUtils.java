@@ -9,10 +9,16 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Random;
-
+/**
+ * Author:HanTianYi
+ * Date:2020/4/15 14:26
+ * Project:ACloud
+ * package:com.tools.controller
+ * about:图形验证码工具类
+ */
 public class CaptchaUtils {
 
-    public static void genCaptcha(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public static void getCaptcha(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         char[] codeSequence = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
                   'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
                   'X', 'Y', 'Z','a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
@@ -66,8 +72,7 @@ public class CaptchaUtils {
         }
         // 将四位数字的验证码保存到Session中。
         HttpSession session = req.getSession();
-        System.out.print(randomCode);
-        session.setAttribute("code", randomCode.toString());
+        session.setAttribute("CaptchaCode", randomCode.toString());
 
         // 禁止图像缓存。
         resp.setHeader("Pragma", "no-cache");
