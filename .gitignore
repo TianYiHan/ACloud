@@ -44,7 +44,6 @@ target/
 /web-app/WEB-INF/classes
 
 # "temporary" build files
-target/
 out/
 build/
 
@@ -92,7 +91,6 @@ local.properties
 
 *.iml
 *.ipr
-*.iws
 .idea/
 
 ## .gitignore for linux
@@ -134,3 +132,28 @@ Icon
 ## hack for graddle wrapper
 !wrapper/*.jar
 !**/wrapper/*.jar
+
+HELP.md
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**
+!**/src/test/**
+
+### STS ###
+.apt_generated
+.factorypath
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
