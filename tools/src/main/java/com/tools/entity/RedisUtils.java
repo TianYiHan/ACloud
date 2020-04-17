@@ -46,6 +46,7 @@ public class RedisUtils {
                     String redishost=p.getProperty("spring.redis.host")==null?null:p.getProperty("spring.redis.host");
                     int redisport=Integer.valueOf(p.getProperty("spring.redis.port"));
                     jedisPool =new JedisPool(redishost,redisport);
+
                     log.info("new Redis连接池JedisPool======host:"+redishost+" port:"+redisport+"===============================");
                     return jedisPool;
                 }

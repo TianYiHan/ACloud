@@ -10,7 +10,7 @@ import com.tools.entity.interceptor.ValidTimeInterceptor;
  * Date:2020/4/17 11:28
  * Project:ACloud
  * package:com.tools.entity.interceptor
- * 此类管理拦截器
+ * 此类管理拦截器,每新增一个拦截器 需要在此类注册
  */
 @Configuration
 public class AdminConfigInterceptor extends WebMvcConfigurationSupport {

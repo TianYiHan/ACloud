@@ -1,11 +1,17 @@
 package com.tools.entity.interceptor;
 
 
+import com.tools.entity.CaptchaUtils;
+import com.tools.entity.RedisUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+import redis.clients.jedis.Jedis;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * Author:HanTianYi
@@ -15,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  * ValidTime拦截器有效时间
  * 主要是用来拦截短时间内同一用户重复访问同一接口的拦截器
  */
-
+@Slf4j
 public class ValidTimeInterceptor implements HandlerInterceptor {
 
     /**
@@ -25,9 +31,24 @@ public class ValidTimeInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        System.out.println("开始拦截.........");
-        //业务代码
-        return false;
+
+        synchronized (ValidTimeInterceptor.class){
+            log.info("======进入拦截器========================");
+            HttpSession session = request.getSession();
+            String sessionId = session.getId();
+            Jedis jedis = RedisUtils.getJedis();
+
+            if (null==jedis.get("redis"+sessionId)){
+                jedis.set("redis"+sessionId,"redis"+sessionId);
+                jedis.expire("redis"+sessionId,1);//设置sessionId过期时间》秒
+                jedis.close();
+                return true;
+            }
+
+            jedis.close();
+            return false;
+        }
+
     }
 
     /**
