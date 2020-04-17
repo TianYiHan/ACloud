@@ -40,6 +40,7 @@ public class RedisUtils {
                         p.load(stream);
                     } catch (IOException e) {
                         log.info("读取文件异常");
+                        //validTimeInterceptor
                         e.printStackTrace();
                     }
                     String redishost=p.getProperty("spring.redis.host")==null?null:p.getProperty("spring.redis.host");
