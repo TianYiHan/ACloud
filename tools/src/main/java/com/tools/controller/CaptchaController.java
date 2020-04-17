@@ -1,5 +1,6 @@
 package com.tools.controller;
 import com.tools.entity.CaptchaUtils;
+import com.tools.entity.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +30,8 @@ public class CaptchaController {
         HttpSession session = req.getSession();
         String sessionId = session.getId();
         //获取redis连接
-        Jedis jedis = new Jedis("106.14.208.219",6379);
+        //Jedis jedis = new Jedis("106.14.208.219",6379);
+        Jedis jedis = RedisUtils.getJedis();
         //查看服务是否运行
 
         System.out.println("服务正在运行: "+jedis.ping());
