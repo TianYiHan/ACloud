@@ -3,8 +3,8 @@ springCloud Project
 学习并且记录
 最终目标是一个springcloud开发框架 集成常用工具等等。。。
 
-日报2020.4.15
-今日新建了用户和工具类模块，用户模块先放一放，近期先更新工具类
+日报2020.4.17
+今日更新了拦截器和redis集成
 下次更新计划：
-集成redis 并且 对验证码等接口做恶意访问检查 判断sessionid
+整合SpringCloud+SpringSecurity+Oauth2
 
