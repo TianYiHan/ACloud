@@ -126,6 +126,6 @@
     <modules>
         <module>register</module>
         <module>user</module>
-        <module>tools</module>
+        <module>generator</module>
     </modules>
 </project>
