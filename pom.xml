@@ -124,10 +124,8 @@
     </dependencies>
 
     <modules>
-        <module>cloud-register</module>
-        <module>cloud-config</module>
+        <module>register</module>
         <module>user</module>
         <module>tools</module>
-        <module>cloud-gateway</module>
     </modules>
 </project>
