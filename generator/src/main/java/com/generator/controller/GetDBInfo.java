@@ -4,10 +4,8 @@ import com.alibaba.fastjson.JSON;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
+
 /**
  * Author:HanTianYi
  * Date:2020/4/21 11:13
@@ -73,5 +71,72 @@ public class GetDBInfo {
         }
     }
 
+
+
+    @RequestMapping("/getTableinfo")
+    public String getTableinfo(@RequestParam Map<String,String> map) throws SQLException {
+        System.out.println("连接数据库："+map.toString());
+        Connection connection =null;
+        Statement stmt =null;
+        ResultSet rs =null;
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        }catch (Exception e){
+            return e.getMessage();
+        }
+        try {
+            String host=map.get("host");
+            String database=map.get("database");
+            String port=map.get("port");
+            String username = map.get("username");
+            String password = map.get("password");
+            String url = "jdbc:mysql://"+host+":"+port+"/"+database+"";
+
+            connection = DriverManager.getConnection(url,username,password);
+            stmt = connection.createStatement();
+            // 4.Statement->ResultSet
+            String sql = "show tables from "+database+"";
+            rs = stmt.executeQuery(sql);
+            List<Map> list =new ArrayList<>();
+
+            while (rs.next()){
+                ResultSet rs2=connection.createStatement().executeQuery("desc "+rs.getString(1) );
+                Map<String,Map<String,String>> tableinfo =new HashMap<>();
+
+
+                while (rs2.next()){
+
+                    Map<String,String> info =new HashMap<>();
+                    info.put("Field",rs2.getString("Field"));
+                    info.put("Type",rs2.getString("Type"));
+                    info.put("Null",rs2.getString("Null"));
+                    info.put("Key",rs2.getString("Key"));
+                    info.put("Default",rs2.getString("Default"));
+                    info.put("Extra",rs2.getString("Extra"));
+
+                    tableinfo.put(rs2.getString("Field"),info);
+                }
+                Map<String,Map<String,Map<String,String>>> res=new HashMap<>();
+                res.put(rs.getString(1),tableinfo);
+                list.add(res);
+            }
+            return JSON.toJSONString(list);
+
+        }catch (Exception e){
+            return e.getMessage();
+        }finally {
+            if (rs!=null){
+                rs.close();
+            }
+            if (stmt!=null){
+                stmt.close();
+            }
+            if (connection!=null){
+                connection.close();
+            }
+
+        }
+    }
 
 }
