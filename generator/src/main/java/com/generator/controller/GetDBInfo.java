@@ -101,7 +101,8 @@ public class GetDBInfo {
             List<Map> list =new ArrayList<>();
 
             while (rs.next()){
-                ResultSet rs2=connection.createStatement().executeQuery("desc "+rs.getString(1) );
+                System.err.println(rs.getString(1));
+                ResultSet rs2=connection.createStatement().executeQuery("desc `"+rs.getString(1)+"`" );
                 Map<String,Map<String,String>> tableinfo =new HashMap<>();
 
 
@@ -128,12 +129,16 @@ public class GetDBInfo {
         }finally {
             if (rs!=null){
                 rs.close();
+                System.out.println("rs.close();");
             }
             if (stmt!=null){
                 stmt.close();
+                System.out.println("stmt.close();");
             }
             if (connection!=null){
                 connection.close();
+                System.out.println("connection.close();");
+
             }
 
         }
