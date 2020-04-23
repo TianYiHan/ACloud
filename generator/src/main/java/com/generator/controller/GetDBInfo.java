@@ -102,7 +102,8 @@ public class GetDBInfo {
 
             while (rs.next()){
                 System.err.println(rs.getString(1));
-                ResultSet rs2=connection.createStatement().executeQuery("desc `"+rs.getString(1)+"`" );
+
+                ResultSet rs2=connection.createStatement().executeQuery("show full columns from `"+rs.getString(1)+"`" );
                 Map<String,Map<String,String>> tableinfo =new HashMap<>();
 
 
@@ -115,6 +116,9 @@ public class GetDBInfo {
                     info.put("Key",rs2.getString("Key"));
                     info.put("Default",rs2.getString("Default"));
                     info.put("Extra",rs2.getString("Extra"));
+                    info.put("Collation",rs2.getString("Collation"));
+                    info.put("Privileges",rs2.getString("Privileges"));
+                    info.put("Comment",rs2.getString("Comment"));
 
                     tableinfo.put(rs2.getString("Field"),info);
                 }
