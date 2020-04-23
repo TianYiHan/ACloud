@@ -1,5 +1,8 @@
 package com.user.entity;
 
+import lombok.Data;
+import lombok.Value;
+
 /**
  * Author:HanTianYi
  * Date:2020/4/15 11:24
@@ -22,7 +25,6 @@ public class User {
 //    数据库中的密码=随机密码+用户输入的密码，进行某种算法聚合的
     //https://blog.csdn.net/qq78442761/article/details/104605661
     String salt;
-
 
 
 }

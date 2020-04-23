@@ -125,6 +125,7 @@ public class GetDBInfo {
                 Map<String,Map<String,Map<String,String>>> res=new HashMap<>();
                 res.put(rs.getString(1),tableinfo);
                 list.add(res);
+
             }
             return JSON.toJSONString(list);
 
