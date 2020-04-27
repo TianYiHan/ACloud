@@ -21,7 +21,7 @@ import freemarker.template.Template;
 public class FreeMarkerDemo {
 
     private static final String TEMPLATE_PATH = "C:\\Users\\13954\\IdeaProjects\\ACloud\\generator\\src\\main\\java\\com\\generator\\template";
-    private static final String CLASS_PATH = "C:\\Users\\13954\\IdeaProjects\\ACloud\\generator\\src\\main\\java\\com\\generator\\code";
+    private static final String CLASS_PATH = "C:\\Users\\13954\\IdeaProjects\\ACloud\\generator\\src\\main\\java\\c om\\generator\\code";
 
     public static void main(String[] args) {
         // step1 创建freeMarker配置实例
@@ -29,7 +29,7 @@ public class FreeMarkerDemo {
         Writer out = null;
         try {
             // step2 获取模版路径
-            configuration.setDirectoryForTemplateLoading(new File(TEMPLATE_PATH));
+            configuration.setDirectoryForTemplateLoading(new File("src\\main\\java\\com\\generator\\template\""));
             // step3 创建数据模型
             Map<String, Object> dataMap = new HashMap<String, Object>();
             dataMap.put("classPath", "com.generator.code");

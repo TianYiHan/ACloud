@@ -1,4 +1,4 @@
-package com.generator.template.entity;
+package com.generator.FreeMarker;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import freemarker.template.Template;
  * package:com.generator.template.entity
  */
 public class EntityUtil {
-    private static final String TEMPLATE_PATH = "C:\\Users\\13954\\IdeaProjects\\ACloud\\generator\\src\\main\\java\\com\\generator\\template";
+
     private static final String CLASS_PATH = "C:\\Users\\13954\\IdeaProjects\\ACloud\\generator\\src\\main\\java\\com\\generator\\code";
 
     /***
@@ -25,28 +25,24 @@ public class EntityUtil {
      * @Title: createEntity
      * @Description: TODO 创建实体类
      */
-    public static void createEntity(List<Map<String,Map<String,Map<String,String>>>> list){
-
-        Properties p= new Properties();
-        p.setProperty("","");
-
+    public static void createEntity(Map<String,Object> map){
         // step1 创建freeMarker配置实例
         Configuration configuration = new Configuration();
         Writer out = null;
         try {
             // step2 获取模版路径
-            configuration.setDirectoryForTemplateLoading(new File(TEMPLATE_PATH));
+            configuration.setDirectoryForTemplateLoading(new File("generator/src/main/java/com/generator/template/entity"));
             // step3 创建数据模型
-            Map<String, Object> dataMap = new HashMap<String, Object>();
-            dataMap.put("entitylist", list);
+            //Map<String,Object> map
+
             // step4 加载模版文件
             Template template = configuration.getTemplate("entity.ftl");
             // step5 生成数据
-            File docFile = new File(CLASS_PATH + "\\" + "AutoCodeDemo.java");
+            File docFile = new File("generator/src/main/java/com/generator/template/entity" + "/" + map.get("ClassName"));
             out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(docFile)));
             // step6 输出文件
-            template.process(dataMap, out);
-            System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^AutoCodeDemo.java 文件创建成功 !");
+            template.process(map, out);
+            System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^"+map.get("ClassName")+".java 文件创建成功 !");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

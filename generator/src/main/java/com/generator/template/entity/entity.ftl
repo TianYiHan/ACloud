@@ -8,16 +8,16 @@ package ${package};
 * package:${package}
 */
 
-public class ${className} {
+public class ${ClassName} {
 
-    <#list entitylist as property>
+    <#list db as property>
         private ${property.Type} ${property.Field};//${property.Comment}
     </#list>
 <#--    <#list Map?keys as key>-->
 <#--        private ${Map[key]}-->
 <#--    </#list>-->
 
-    <#list entitylist as property>
+    <#list db as property>
         public ${property.Type} get${property.Field?cap_first}() {
         return ${property.Field};
         }

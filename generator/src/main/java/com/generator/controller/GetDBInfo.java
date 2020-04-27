@@ -1,6 +1,8 @@
 package com.generator.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.generator.FreeMarker.EntityUtil;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.*;
@@ -120,15 +122,44 @@ public class GetDBInfo {
                     info.put("Privileges",rs2.getString("Privileges"));
                     info.put("Comment",rs2.getString("Comment"));
 
+
+                    System.out.println(info);
+
+                    DB d = JSONObject.parseObject(JSONObject.toJSONString(info),DB.class);
+                    Map<String,Object> map1=new HashMap<>();
+                    map1.put("db",d);
+                    map1.put("ClassName",rs.getString(1));
+                    map1.put("package","com.hty.entity");
+                    map1.put("Author","hty");
+                    map1.put("Date","time");
+                    map1.put("Project","ACloud");
+                    EntityUtil.createEntity(map1);
+
+
                     tableinfo.put(rs2.getString("Field"),info);
                 }
                 Map<String,Map<String,Map<String,String>>> res=new HashMap<>();
                 res.put(rs.getString(1),tableinfo);
                 list.add(res);
 
-            }
-            return JSON.toJSONString(list);
 
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            return JSON.toJSONString(list);
         }catch (Exception e){
             return e.getMessage();
         }finally {
