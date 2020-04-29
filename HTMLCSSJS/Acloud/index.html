@@ -21,7 +21,15 @@
 	  var table = layui.table;
 	  
 	  
-	  
+	  $("#allchecked").click(function(){
+		 $.each($("input:checkbox:checked"),function(index,item){
+			if(item.checked){
+				
+			}else{
+				item.checked=true;
+			}
+		 })
+	  })
 	  
 	  $("#getTables").click(function(){
 	      $.ajax({
@@ -42,7 +50,7 @@
 				for(var i=0,l=rtnData.length;i<l;i++){
 				    for(var key in rtnData[i]){
 					   var tbi='<tr  class="tablelist "  id="'+key+'"><td onclick="change('+i+')">'+(i+1)+'</td><td onclick="change('+i+')">'+key+'</td><td>'
-							+'<input type="checkbox" id="checkbox'+key+'" >'
+							+'<input type="checkbox" value="'+key+'" >'
 					   +'</td><tr>';
 					   $("#tabletbody").append(tbi);
 					   var ijk=1;
@@ -52,15 +60,9 @@
 						   $("#tabletbody2").append(table2tr);
 						   ijk++;
 					   })
-					   
-					   
-						
-					   
-				    }
+					}
 				}
-				
-				
-	  			
+
 	  		},
 	  		error:function(XMLHttpRequest){
 	  			layer.alert(XMLHttpRequest.responseText, {icon: 2})
@@ -68,6 +70,31 @@
 	  	})
 	  });
 	  
+	  $("#creatJavaFile").click(function(){
+		  var needCreat="";	  
+		  $.each($("input:checkbox:checked"),function(index,item){
+				  if(index==0){
+					  needCreat+=item.value
+				  }else{
+					  needCreat+=","+item.value
+				  }
+		  })
+		  
+		  alert(needCreat)
+		  $.ajax({
+			  url:"http://localhost:8080/DB/creatJavaFile",
+			  type:"post",
+			  data:{"host":$("#hostinput").val(),"port":$("#portinput").val(),"username":$("#usernameinput").val(),"password":$("#passwordinput").val(),"database":$("#databaseinput").val(),"needCreat":needCreat},
+			  dataType:"json",
+			  success:function(rtnData){
+				  
+			  },
+			  error:function(XMLHttpRequest){
+	  			layer.alert(XMLHttpRequest.responseText, {icon: 2})
+			}
+		  })
+		  
+	  })
 	  
 	
 		
@@ -77,6 +104,7 @@
 		<br><br><br>
 				<div id="dbInfo" style="width: 40%;position: relative;left: 30%; ">
 					<form class="layui-form" action="">
+						
 						<blockquote class="layui-elem-quote">数据库设置</blockquote>
 					  <div class="layui-form-item">
 					    <label class="layui-form-label">数据库地址</label>
@@ -123,39 +151,34 @@
 					</form>
 				</div>
 				
-					<div   id="tableinfo" style=" opacity: 0;width: 15%; height: 650px; overflow-y:auto;overflow-x: hidden; position: absolute;left:24%;top: 7%; ">
-					  <blockquote class="layui-elem-quote">table列表</blockquote>
+					<div   id="tableinfo" style=" opacity: 0;width: 22%; height: 650px; overflow-y:auto;overflow-x: hidden; position: absolute;left:24%;top: 7%; ">
+					  <blockquote class="layui-elem-quote">table列表
+					  
+					  </blockquote>
 					  <table id="tablelist" style="" class="layui-table">
-					      <colgroup>
-					        <col width="70">
-					        <col width="200">
-							<col width="200">
-					      </colgroup>
+					      
 					      <thead>
 					        <tr>
 					          <th>序号</th>
 					          <th>表名称</th>
-							  <th>是否生成</th>
+							  <th>是否生成
+								<input type="button" id="allchecked" value="全选" />
+							  </th>
 					        </tr> 
 					      </thead>
 					      <tbody id="tabletbody">
 									
 					      </tbody>
 					    </table>
-					  
+						
+					  <input type="button" class="layui-btn" id="creatJavaFile" value="生成选中的表" />
 					</div>
 					
-					<div id="inforight"  style=" opacity: 0;width: 56%; position: absolute;right:3%;top: 7%; ">
+					<div id="inforight"  style=" opacity: 0;width: 50%; position: absolute;right:3%;top: 7%; ">
 						<blockquote class="layui-elem-quote">table详情</blockquote>
 						<table id="tablelist" style="" class="layui-table">
 						    <colgroup>
-						      <!-- <col width="300">
-						      <col width="300">
-							  <col width="100">
-							  <col width="100">
-							  <col width="200">
-							  <col width="200">
-							  <col width="200"> -->
+						     
 						    </colgroup>
 						    <thead>
 						      <tr>

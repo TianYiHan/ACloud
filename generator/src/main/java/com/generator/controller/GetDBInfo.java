@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.*;
 import java.util.*;
+import java.util.Date;
 
 /**
  * Author:HanTianYi
@@ -25,55 +26,6 @@ import java.util.*;
 @CrossOrigin
 @RequestMapping("DB")
 public class GetDBInfo {
-
-    @RequestMapping("/getTables")
-    public String getTables(@RequestParam Map<String,String> map) throws SQLException {
-        System.out.println("连接数据库："+map.toString());
-        Connection connection =null;
-        Statement stmt =null;
-        ResultSet rs =null;
-
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        }catch (Exception e){
-            return e.getMessage();
-        }
-        try {
-            String host=map.get("host");
-            String database=map.get("database");
-            String port=map.get("port");
-            String username = map.get("username");
-            String password = map.get("password");
-            String url = "jdbc:mysql://"+host+":"+port+"/"+database+"";
-
-            connection = DriverManager.getConnection(url,username,password);
-            stmt = connection.createStatement();
-            // 4.Statement->ResultSet
-            String sql = "show tables from "+database+"";
-            rs = stmt.executeQuery(sql);
-            List<String> list =new ArrayList<String>();
-            while (rs.next()){
-                list.add(rs.getString(1));
-            }
-            return JSON.toJSONString(list);
-
-        }catch (Exception e){
-            return e.getMessage();
-        }finally {
-            if (rs!=null){
-                rs.close();
-            }
-            if (stmt!=null){
-                stmt.close();
-            }
-            if (connection!=null){
-                connection.close();
-            }
-
-        }
-    }
-
-
 
     @RequestMapping("/getTableinfo")
     public String getTableinfo(@RequestParam Map<String,String> map) throws SQLException {
@@ -122,44 +74,121 @@ public class GetDBInfo {
                     info.put("Privileges",rs2.getString("Privileges"));
                     info.put("Comment",rs2.getString("Comment"));
 
-
-                    System.out.println(info);
-
-                    DB d = JSONObject.parseObject(JSONObject.toJSONString(info),DB.class);
-                    Map<String,Object> map1=new HashMap<>();
-                    map1.put("db",d);
-                    map1.put("ClassName",rs.getString(1));
-                    map1.put("package","com.hty.entity");
-                    map1.put("Author","hty");
-                    map1.put("Date","time");
-                    map1.put("Project","ACloud");
-                    EntityUtil.createEntity(map1);
-
-
                     tableinfo.put(rs2.getString("Field"),info);
                 }
                 Map<String,Map<String,Map<String,String>>> res=new HashMap<>();
                 res.put(rs.getString(1),tableinfo);
                 list.add(res);
+            }
 
+            return JSON.toJSONString(list);
+        }catch (Exception e){
+            return e.getMessage();
+        }finally {
+            if (rs!=null){
+                rs.close();
+                System.out.println("rs.close();");
+            }
+            if (stmt!=null){
+                stmt.close();
+                System.out.println("stmt.close();");
+            }
+            if (connection!=null){
+                connection.close();
+                System.out.println("connection.close();");
 
             }
 
+        }
+    }
 
 
+    @RequestMapping("/creatJavaFile")
+    public String creatJavaFile(@RequestParam Map<String,String> map) throws SQLException {
+        System.out.println("连接数据库："+map.toString());
+        Connection connection =null;
+        Statement stmt =null;
+        ResultSet rs =null;
 
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        }catch (Exception e){
+            return e.getMessage();
+        }
+        try {
+            String host=map.get("host");
+            String database=map.get("database");
+            String port=map.get("port");
+            String username = map.get("username");
+            String password = map.get("password");
+            String url = "jdbc:mysql://"+host+":"+port+"/"+database+"";
 
+            connection = DriverManager.getConnection(url,username,password);
+            stmt = connection.createStatement();
+            // 4.Statement->ResultSet
+            String needcreat=map.get("needCreat");
+            for (String item:needcreat.split(",")) {
+                System.out.println(item);
+                //while()
+                String sql = "show full columns from `"+item+"`";
+                rs=stmt.executeQuery(sql);
 
+                Map<String, Object> map2 = new HashMap<>();
+                List<DB> dbs=new ArrayList<>();
+                while (rs.next()){
+                    DB db = new DB();
+                    db.setField(rs.getString("Field"));
+                    db.setCollation(rs.getString("Collation"));
+                    db.setComment(rs.getString("Comment"));
+                    db.setDefault(rs.getString("Default"));
+                    db.setExtra(rs.getString("Extra"));
+                    if (rs.getString("Type").indexOf("int")!= -1){
+                        db.setType("int");
+                    }else if (rs.getString("Type").indexOf("bigint")!= -1){
+                        db.setType("BigInteger");
+                    }else if (rs.getString("Type").indexOf("varchar")!= -1){
+                        db.setType("String");
+                    }else if (rs.getString("Type").indexOf("char")!= -1){
+                        db.setType("String");
+                    }else if (rs.getString("Type").indexOf("blob")!= -1){
+                        db.setType("byte[]");
+                    }else if (rs.getString("Type").indexOf("text")!= -1){
+                        db.setType("String");
+                    }else if (rs.getString("Type").indexOf("time")!= -1){
+                        db.setType("Date");
+                        map2.put("isdate",true);
+                    }else if (rs.getString("Type").indexOf("decimal")!= -1){
+                        db.setType("BigDecimal");
+                    }else if (rs.getString("Type").indexOf("double")!= -1){
+                        db.setType("double");
+                    }else if (rs.getString("Type").indexOf("float")!= -1){
+                        db.setType("float");
+                    }else {
+                        db.setType("Object");
+                    }
+                    db.setKey(rs.getString("Key"));
+                    db.setNull(rs.getString("Null"));
+                    db.setPrivileges(rs.getString("Privileges"));
+                    dbs.add(db);
+                }
+                map2.put("package","com.generator.template.entity");
+                map2.put("Author","hty");
+                map2.put("Date",new Date().toString());
+                map2.put("Project","Acloud");
+                char[] chars=item.toCharArray();
+                if(chars[0] >= 97 && chars[0] <=122){chars[0]-=32;}
+                for (int i=0;i<chars.length;i++){
+                    if (chars[i]=='_'){
+                        chars[i+1]-=32;
+                    }
+                }
+                map2.put("ClassName",new String(chars).replace("_",""));
+                map2.put("dbs",dbs);
+                EntityUtil.createEntity(map2);
 
+            }
 
-
-
-
-
-
-
-
-            return JSON.toJSONString(list);
+            return map.toString();
         }catch (Exception e){
             return e.getMessage();
         }finally {
