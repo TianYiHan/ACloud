@@ -1,8 +1,7 @@
 package com.generator.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.generator.FreeMarker.EntityUtil;
+import com.generator.FreeMarker.utils.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.*;
@@ -128,8 +127,7 @@ public class GetDBInfo {
             // 4.Statement->ResultSet
             String needcreat=map.get("needCreat");
             for (String item:needcreat.split(",")) {
-                System.out.println(item);
-                //while()
+                System.out.println(item);//需要获取的表
                 String sql = "show full columns from `"+item+"`";
                 rs=stmt.executeQuery(sql);
 
@@ -171,10 +169,23 @@ public class GetDBInfo {
                     db.setPrivileges(rs.getString("Privileges"));
                     dbs.add(db);
                 }
-                map2.put("package","com.generator.template.entity");
-                map2.put("Author","hty");
+
+                //////获取表注释
+                Statement stmt2=connection.createStatement();
+                ResultSet rs2=stmt2.executeQuery("show table status WHERE name='"+item+"'");
+                while (rs2.next()){
+                    map2.put("Comment",rs2.getString("Comment"));
+                }
+                rs2.close();
+                stmt2.close();
+                //Comment
+                /////
+
+                map2.put("package","xxx.xxx.xxx //此处替换成你的包名称");
+                map2.put("Author","https://github.com/TianYiHan");
+
+                map2.put("Project","ProjectName");
                 map2.put("Date",new Date().toString());
-                map2.put("Project","Acloud");
                 char[] chars=item.toCharArray();
                 if(chars[0] >= 97 && chars[0] <=122){chars[0]-=32;}
                 for (int i=0;i<chars.length;i++){
@@ -184,7 +195,14 @@ public class GetDBInfo {
                 }
                 map2.put("ClassName",new String(chars).replace("_",""));
                 map2.put("dbs",dbs);
-                EntityUtil.createEntity(map2);
+
+
+                EntityUtil.createEntity(map2);//创建实体类
+//                MapperUtil.createMapper(map2);//创建mapper接口类
+//                ServiceUtil.createService(map2);//创建service接口
+//                ServiceImplUtil.createServiceImpl(map2);//创建service接口实现类
+//                ControllerUtil.createController(map2);//创建controller
+
 
             }
 

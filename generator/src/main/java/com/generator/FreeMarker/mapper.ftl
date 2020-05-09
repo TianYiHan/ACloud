@@ -7,10 +7,10 @@ import java.util.Date;
 /**
 * Author:${Author}
 * Date:${Date}
-* Project:${Project}
-* 表注释:${Comment}
+*
 */
-public class ${ClassName} {
+@Mapper
+public interface ${ClassName}Mapper {
 
     <#list dbs as item>
         private ${item.type} ${item.field};    //${item.comment}

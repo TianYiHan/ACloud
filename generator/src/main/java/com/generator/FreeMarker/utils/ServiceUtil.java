@@ -1,31 +1,26 @@
-package com.generator.FreeMarker;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+package com.generator.FreeMarker.utils;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 
+import java.io.*;
+import java.util.Map;
+
 /**
  * Author:HanTianYi
- * Date:2020/4/23 15:49
+ * Date:2020/5/9 10:26
  * Project:ACloud
- * package:com.generator.template.entity
+ * package:com.generator.FreeMarker
  */
-public class EntityUtil {
-
-    private static final String CLASS_PATH = "C:\\Users\\13954\\IdeaProjects\\ACloud\\generator\\src\\main\\java\\com\\generator\\code";
+public class ServiceUtil {
 
     /***
      *
-     * @Title: createEntity
-     * @Description: TODO 创建实体类
+     * @Title: createServiceImpl
+     * @Description: TODO 创建接口service类
      */
-    public static void createEntity(Map<String,Object> map2){
+    public static void createService(Map<String,Object> map2){
+
         // step1 创建freeMarker配置实例
         Configuration configuration = new Configuration();
         Writer out = null;
@@ -36,13 +31,13 @@ public class EntityUtil {
             //Map<String,Object> map
 
             // step4 加载模版文件
-            Template template = configuration.getTemplate("entity.ftl");
+            Template template = configuration.getTemplate("service.ftl");
             // step5 生成数据
-            File docFile = new File("generator/src/main/java/com/generator/template/entity" + "/" + map2.get("ClassName")+".java");
+            File docFile = new File("generator/src/main/java/com/generator/template/service" + "/" + map2.get("ClassName")+"Service.java");
             out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(docFile)));
             // step6 输出文件
             template.process(map2, out);
-            System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^"+map2.get("ClassName")+".java 文件创建成功 !");
+            System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^"+map2.get("ClassName")+"Service.java 文件创建成功 !");
         } catch (Exception e) {
             try {
                 if (null != out) {
@@ -63,9 +58,6 @@ public class EntityUtil {
         }
 
     }
-
-
-
 
 
 }
