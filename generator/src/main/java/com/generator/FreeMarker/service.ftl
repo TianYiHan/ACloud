@@ -1,21 +1,44 @@
-package ${package};
-
-<#if isdate??>
-import java.util.Date;
-</#if>
+//package自定义
+import java.util.List;
+import java.util.Map;
 
 /**
 * Author:${Author}
 * Date:${Date}
-* Project:${Project}
-* package:${package}
+* 表注释:${Comment}
 */
-public interface ${ClassName} {
+public interface ${ClassName}Service {
 
-    <#list dbs as item>
-        private ${item.type} ${item.field};    //${item.comment}
-    </#list>
+    /**
+    * 插入${ClassName}(非空)
+    * @param bean
+    * @return
+    */
+    public int add${ClassName}(${ClassName} bean);
 
+    /**
+    * 删除${ClassName}
+    *
+    * @param bean
+    * @return
+    */
+    public int  remove${ClassName}(${ClassName} bean);
+
+    /**
+    * 修改${ClassName}
+    *
+    * @param bean
+    * @return
+    */
+    public int  modify${ClassName}(${ClassName} bean);
+
+    /**
+    * 查询${ClassName}
+    *
+    * @param bean
+    * @return
+    */
+    public List<${ClassName}> query${ClassName}ByParams(Map params);
 
 
 

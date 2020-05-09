@@ -198,15 +198,15 @@ public class GetDBInfo {
 
 
                 EntityUtil.createEntity(map2);//创建实体类
-//                MapperUtil.createMapper(map2);//创建mapper接口类
-//                ServiceUtil.createService(map2);//创建service接口
-//                ServiceImplUtil.createServiceImpl(map2);//创建service接口实现类
-//                ControllerUtil.createController(map2);//创建controller
-
+                MapperUtil.createMapper(map2);//创建mapper接口类
+                ServiceUtil.createService(map2);//创建service接口
+                ServiceImplUtil.createServiceImpl(map2);//创建service接口实现类
+                ControllerUtil.createController(map2);//创建controller
+                MapperXmlUtil.createMapperXML(map2);//创建mapperXML映射文件
 
             }
 
-            return map.toString();
+            return "ok";
         }catch (Exception e){
             return e.getMessage();
         }finally {

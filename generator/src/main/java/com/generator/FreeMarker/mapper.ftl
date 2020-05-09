@@ -1,34 +1,51 @@
-package ${package};
+//package自定义
 
-<#if isdate??>
-import java.util.Date;
-</#if>
+
+import java.util.List;
+import java.util.Map;
+
 
 /**
 * Author:${Author}
 * Date:${Date}
-*
+* 表注释:${Comment}
 */
-@Mapper
 public interface ${ClassName}Mapper {
 
-    <#list dbs as item>
-        private ${item.type} ${item.field};    //${item.comment}
-    </#list>
+<#--    <#list dbs as item>-->
+<#--        private ${item.type} ${item.field};    //${item.comment}-->
+<#--    </#list>-->
+    /**
+    * 插入${ClassName}(非空)
+    * @param bean
+    * @return
+    */
+    public int insert${ClassName}(${ClassName} bean);
 
+    /**
+    * 删除${ClassName}
+    *
+    * @param bean
+    * @return
+    */
+    public int delete${ClassName}(${ClassName} bean);
 
+    /**
+    * 修改信息
+    *
+    * @param bean
+    * @return
+    */
+    public int update${ClassName}(${ClassName} bean);
 
-    <#list dbs as item>
-        public ${item.type} get${item.field?cap_first}() {
-            return ${item.field};
-        }
-    </#list>
+    /**
+    * 查询信息
+    *
+    * @param params
+    * @return
+    */
+    public List<${ClassName}> select${ClassName}ByParams(Map params);
 
-    <#list dbs as item>
-        public void set${item.field?cap_first}(${item.type} ${item.field}) {
-            this.${item.field} = ${item.field};
-        }
-    </#list>
 
 
 }

@@ -1,5 +1,4 @@
-package ${package};
-
+//package自定义
 <#if isdate??>
 import java.util.Date;
 </#if>

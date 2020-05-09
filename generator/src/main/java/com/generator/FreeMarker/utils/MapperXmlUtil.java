@@ -8,18 +8,18 @@ import java.util.Map;
 
 /**
  * Author:HanTianYi
- * Date:2020/5/9 10:22
+ * Date:2020/5/9 16:33
  * Project:ACloud
- * package:com.generator.FreeMarker
+ * package:com.generator.FreeMarker.utils
  */
-public class ControllerUtil {
+public class MapperXmlUtil {
 
     /***
      *
-     * @Title: createController
-     * @Description: TODO 创建Controller
+     * @Title: createMapper
+     * @Description: TODO 创建MapperXML
      */
-    public static void createController(Map<String,Object> map2){
+    public static void createMapperXML(Map<String,Object> map2){
         // step1 创建freeMarker配置实例
         Configuration configuration = new Configuration();
         Writer out = null;
@@ -30,13 +30,13 @@ public class ControllerUtil {
             //Map<String,Object> map
 
             // step4 加载模版文件
-            Template template = configuration.getTemplate("controller.ftl");
+            Template template = configuration.getTemplate("mapperxml.ftl");
             // step5 生成数据
-            File docFile = new File("generator/src/main/java/com/generator/template/controller" + "/" + map2.get("ClassName")+"Controller.java");
+            File docFile = new File("generator/src/main/java/com/generator/template/mapperxml" + "/" + map2.get("ClassName")+"Mapper.xml");
             out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(docFile)));
             // step6 输出文件
             template.process(map2, out);
-            System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^"+map2.get("ClassName")+"Controller.java 文件创建成功 !");
+            System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^"+map2.get("ClassName")+"Mapper.xml 文件创建成功 !");
         } catch (Exception e) {
             try {
                 if (null != out) {
@@ -57,6 +57,7 @@ public class ControllerUtil {
         }
 
     }
+
 
 
 
