@@ -1,9 +1,15 @@
-//package自定义
+package com.generator.template.service.impl;//package自定义
+
+import com.generator.template.entity.${ClassName};
+import com.generator.template.mapper.${ClassName}Mapper;
+import com.generator.template.service.${ClassName}Service;
+
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
-
+import java.util.List;
+import java.util.Map;
 /**
 * Author:${Author}
 * Date:${Date}
@@ -75,7 +81,7 @@ public class ${ClassName}ServiceImpl implements ${ClassName}Service{
     * 根据Map里的参数，查询${ClassName}集合
     */
     @Override
-    public List<${ClassName}> query${ClassName}(Map params){
+    public List<${ClassName}> query${ClassName}ByParams(Map params){
         List<${ClassName}> list = null;
         try {
             if(params != null){

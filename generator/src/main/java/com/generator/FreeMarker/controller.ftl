@@ -1,8 +1,9 @@
-//package自定义
+package com.generator.template.controller;//package自定义
 
+import com.generator.template.entity.${ClassName};
+import com.generator.template.service.${ClassName}Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 import java.util.Map;
 
 /**

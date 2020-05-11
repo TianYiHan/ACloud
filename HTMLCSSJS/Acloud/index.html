@@ -5,7 +5,7 @@
 		<title></title>
 	</head>
 	<link rel="stylesheet" type="text/css" href="js/layui-v2.5.6/layui/css/layui.css"/>
-	<script src="./js/jquery-3.4.1.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/jquery-3.4.1.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/layui-v2.5.6/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/layui-v2.5.6/layui/layui.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
@@ -80,7 +80,7 @@
 				  }
 		  })
 		  
-		  alert(needCreat)
+		  
 		  $.ajax({
 			  url:"http://localhost:8080/DB/creatJavaFile",
 			  type:"post",
@@ -90,8 +90,9 @@
 				  
 			  },
 			  error:function(XMLHttpRequest){
-	  			layer.alert(XMLHttpRequest.responseText, {icon: 2})
-			}
+	  			layer.alert(XMLHttpRequest.responseText, {icon: 1})
+				window.location.href = "http://localhost:8080/DB/downloadcode";
+			  }
 		  })
 		  
 	  })
@@ -161,9 +162,7 @@
 					        <tr>
 					          <th>序号</th>
 					          <th>表名称</th>
-							  <th>是否生成
-								<input type="button" id="allchecked" value="全选" />
-							  </th>
+							  <th>是否生成</th>
 					        </tr> 
 					      </thead>
 					      <tbody id="tabletbody">

@@ -1,4 +1,4 @@
-//package自定义
+package com.generator.template.entity;//package自定义
 <#if isdate??>
 import java.util.Date;
 </#if>

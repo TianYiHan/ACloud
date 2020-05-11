@@ -1,5 +1,5 @@
-//package自定义
-
+package com.generator.template.mapper;//package自定义
+import com.generator.template.entity.${ClassName};
 
 import java.util.List;
 import java.util.Map;

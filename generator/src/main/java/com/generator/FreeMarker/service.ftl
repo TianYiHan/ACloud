@@ -1,4 +1,6 @@
-//package自定义
+package com.generator.template.service;//package自定义
+import com.generator.template.entity.${ClassName};
+
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +37,7 @@ public interface ${ClassName}Service {
     /**
     * 查询${ClassName}
     *
-    * @param bean
+    * @param params
     * @return
     */
     public List<${ClassName}> query${ClassName}ByParams(Map params);

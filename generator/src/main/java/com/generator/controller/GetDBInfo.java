@@ -2,11 +2,16 @@ package com.generator.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.generator.FreeMarker.utils.*;
+import org.apache.logging.log4j.util.Base64Util;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Author:HanTianYi
@@ -103,7 +108,9 @@ public class GetDBInfo {
 
 
     @RequestMapping("/creatJavaFile")
-    public String creatJavaFile(@RequestParam Map<String,String> map) throws SQLException {
+    public String creatJavaFile(@RequestParam Map<String,String> map, HttpServletResponse response,HttpServletRequest request) throws SQLException {
+        //删除文件
+        DownloadFile.delAllFile(new File("generator/src/main/java/com/generator/template"));
         System.out.println("连接数据库："+map.toString());
         Connection connection =null;
         Statement stmt =null;
@@ -205,8 +212,15 @@ public class GetDBInfo {
                 MapperXmlUtil.createMapperXML(map2);//创建mapperXML映射文件
 
             }
+            String targetFolderPath = "generator/src/main/java/com/generator/template";
+            String newZipFilePath = "generator/src/main/java/com/generator/code.zip";
+            //将目标目录的文件压缩成Zip文件
+            DownloadFile.compress(targetFolderPath , newZipFilePath);
 
-            return "ok";
+            //删除文件
+            DownloadFile.delAllFile(new File("generator/src/main/java/com/generator/template"));
+
+            return "生成成功，开始下载";
         }catch (Exception e){
             return e.getMessage();
         }finally {
@@ -224,6 +238,55 @@ public class GetDBInfo {
 
             }
 
+        }
+    }
+
+
+    @RequestMapping("/downloadcode")
+    public void  download(HttpServletResponse response) throws IOException {
+        //删除文件
+        DownloadFile.delAllFile(new File("generator/src/main/java/com/generator/template"));
+        if (true) {
+            FileInputStream is = null;
+            BufferedInputStream bs = null;
+            OutputStream os = null;
+            try {
+                File file = new File("generator/src/main/java/com/generator/code.zip");
+                if (file.exists()) {
+                    //设置Headers
+                    response.setHeader("Content-Type","application/octet-stream");
+                    //设置下载的文件的名称-该方式已解决中文乱码问题
+                    response.setHeader("Content-Disposition","attachment;filename=" +  new String( "code.zip".getBytes("gb2312"), "ISO8859-1" ));
+                    is = new FileInputStream(file);
+                    bs =new BufferedInputStream(is);
+                    os = response.getOutputStream();
+                    byte[] buffer = new byte[1024];
+                    int len = 0;
+                    while((len = bs.read(buffer)) != -1){
+                        os.write(buffer,0,len);
+                    }
+
+                }
+
+            }catch(IOException ex){
+                ex.printStackTrace();
+            }finally {
+                try{
+                    if(is != null){
+                        is.close();
+                    }
+                    if( bs != null ){
+                        bs.close();
+                    }
+                    if( os != null){
+                        os.flush();
+                        os.close();
+                    }
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+                System.out.println(new File("generator/src/main/java/com/generator/code.zip").delete());
+            }
         }
     }
 
