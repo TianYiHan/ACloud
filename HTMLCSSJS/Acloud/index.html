@@ -33,7 +33,7 @@
 	  
 	  $("#getTables").click(function(){
 	      $.ajax({
-	  		url:"http://localhost:8080/DB/getTableinfo",
+	  		url:"http://106.14.208.219:9090/DB/getTableinfo",
 	  		type:"post",
 	  		data:{"host":$("#hostinput").val(),"port":$("#portinput").val(),"username":$("#usernameinput").val(),"password":$("#passwordinput").val(),"database":$("#databaseinput").val()},
 	  		dataType:"json",
@@ -82,7 +82,7 @@
 		  
 		  
 		  $.ajax({
-			  url:"http://localhost:8080/DB/creatJavaFile",
+			  url:"http://106.14.208.219:9090/DB/creatJavaFile",
 			  type:"post",
 			  data:{"host":$("#hostinput").val(),"port":$("#portinput").val(),"username":$("#usernameinput").val(),"password":$("#passwordinput").val(),"database":$("#databaseinput").val(),"needCreat":needCreat},
 			  dataType:"json",
@@ -91,7 +91,7 @@
 			  },
 			  error:function(XMLHttpRequest){
 	  			layer.alert(XMLHttpRequest.responseText, {icon: 1})
-				window.location.href = "http://localhost:8080/DB/downloadcode";
+				window.location.href = "http://106.14.208.219:9090/DB/downloadcode";
 			  }
 		  })
 		  
@@ -193,6 +193,7 @@
 						    <tbody id="tabletbody2">
 								
 						    </tbody>
+							
 						  </table>
 					</div>
 				
