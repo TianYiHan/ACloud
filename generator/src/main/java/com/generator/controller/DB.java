@@ -18,6 +18,7 @@ public class DB {
     String Collation;
     String Default;
     String Key;
+    
 
 
 
