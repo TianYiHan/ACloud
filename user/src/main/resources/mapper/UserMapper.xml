@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.user.mapper.UserMapper">
+
+
+
+    <!-- 结果集 -->
+    <resultMap id="UserResultMap" type="com.user.entity.User">
+            <result column="id" property="id" javaType="java.lang.String" /><!-- 用户唯一id -->
+            <result column="name" property="name" javaType="java.lang.String" /><!-- 用户名称 -->
+            <result column="level" property="level" javaType="java.lang.String" /><!-- 用户等级 -->
+            <result column="birthday" property="birthday" javaType="" /><!-- 用户生日 -->
+            <result column="password" property="password" javaType="java.lang.String" /><!-- 用户密码 -->
+            <result column="passwordsalt" property="passwordsalt" javaType="java.lang.String" /><!-- 用户密码加点盐 -->
+            <result column="email" property="email" javaType="java.lang.String" /><!-- 用户邮箱 -->
+            <result column="emailstatus" property="emailstatus" javaType="java.lang.String" /><!-- 邮箱是否验证 -->
+            <result column="mobile" property="mobile" javaType="java.lang.String" /><!-- 用户电话 -->
+            <result column="mobilestatus" property="mobilestatus" javaType="java.lang.String" /><!-- 用户电话是否验证 -->
+            <result column="address" property="address" javaType="java.lang.String" /><!-- 用户地址 -->
+            <result column="createtime" property="createtime" javaType="java.util.Date" /><!-- 用户创建时间 -->
+            <result column="activetime" property="activetime" javaType="java.lang.String" /><!-- 用户活跃时间（增删改查时更新） -->
+            <result column="activeip" property="activeip" javaType="java.lang.String" /><!-- 用户活跃ip（增删改查时更新） -->
+
+            <result column="imgaddress" property="imgaddress" javaType="java.lang.String" /><!-- 用户头像地址 -->
+            <result column="introduce" property="introduce" javaType="java.lang.String" /><!-- 用户简介 -->
+    </resultMap>
+
+    <!-- 查询字段 -->
+    <sql id="User_Column_List">
+        `Id`,`Name`,`Level`,`Birthday`,`Password`,`Passwordsalt`,`Email`,`Emailstatus`,`Mobile`,`Mobilestatus`,`Address`,`Createtime`,`Activetime`,`activeip`,`Imgaddress`,`Introduce`
+    </sql>
+
+    <!-- 新增信息 -->
+    <insert id="insertUser"  parameterType="com.user.entity.User">
+        insert into User (`id`,`name`,`level`,`birthday`,`password`,`passwordsalt`,`email`,`emailstatus`,`mobile`,`mobilestatus`,`address`,`createtime`,`activetime`,`activeip`,`imgaddress`,`introduce`) values (#{id},#{name},#{level},#{birthday},#{password},#{passwordsalt},#{email},#{emailstatus},#{mobile},#{mobilestatus},#{address},#{createtime},#{activetime},#{activeip},#{imgaddress},#{introduce})
+    </insert>
+
+
+    <!-- 删除信息 -->
+    <delete id="deleteUser"  parameterType="com.user.entity.User">
+        delete from User where ididid???????didiidididi = #{ididiidididiidiidi}
+    </delete>
+
+    <!-- 更改信息 -->
+    <update id="updateUser"  parameterType="com.user.entity.User">
+        update
+        User
+        set
+        <trim suffixOverrides=",">
+                <if test="id != null">
+                    id = #{id},
+                </if>
+                <if test="name != null">
+                    name = #{name},
+                </if>
+                <if test="level != null">
+                    level = #{level},
+                </if>
+                <if test="birthday != null">
+                    birthday = #{birthday},
+                </if>
+                <if test="password != null">
+                    password = #{password},
+                </if>
+                <if test="passwordsalt != null">
+                    passwordsalt = #{passwordsalt},
+                </if>
+                <if test="email != null">
+                    email = #{email},
+                </if>
+                <if test="emailstatus != null">
+                    emailstatus = #{emailstatus},
+                </if>
+                <if test="mobile != null">
+                    mobile = #{mobile},
+                </if>
+                <if test="mobilestatus != null">
+                    mobilestatus = #{mobilestatus},
+                </if>
+                <if test="address != null">
+                    address = #{address},
+                </if>
+                <if test="createtime != null">
+                    createtime = #{createtime},
+                </if>
+                <if test="activetime != null">
+                    activetime = #{activetime},
+                </if>
+                <if test="activeip != null">
+                    activeip = #{activeip},
+                </if>
+                <if test="imgaddress != null">
+                    imgaddress = #{imgaddress},
+                </if>
+                <if test="introduce != null">
+                    introduce = #{introduce},
+                </if>
+        </trim>
+        where
+        idididii???????dididiidididi = #{ididiidididiidiidi}
+    </update>
+
+    <!-- 查询信息 -->
+    <select id="selectUserByParams" parameterType="java.util.Map" resultType="com.user.entity.User">
+        select
+        <include refid="User_Column_List" />
+        from User
+        <where>
+            <trim prefixOverrides="and">
+                    <if test="id != null and id != ''">
+                        and
+                        id like CONCAT(CONCAT('%', #{id}), '%')
+                    </if>
+                    <if test="name != null and name != ''">
+                        and
+                        name like CONCAT(CONCAT('%', #{name}), '%')
+                    </if>
+                    <if test="level != null and level != ''">
+                        and
+                        level like CONCAT(CONCAT('%', #{level}), '%')
+                    </if>
+                    <if test="birthday != null and birthday != ''">
+                        and
+                        birthday like CONCAT(CONCAT('%', #{birthday}), '%')
+                    </if>
+                    <if test="password != null and password != ''">
+                        and
+                        password like CONCAT(CONCAT('%', #{password}), '%')
+                    </if>
+                    <if test="passwordsalt != null and passwordsalt != ''">
+                        and
+                        passwordsalt like CONCAT(CONCAT('%', #{passwordsalt}), '%')
+                    </if>
+                    <if test="email != null and email != ''">
+                        and
+                        email like CONCAT(CONCAT('%', #{email}), '%')
+                    </if>
+                    <if test="emailstatus != null and emailstatus != ''">
+                        and
+                        emailstatus like CONCAT(CONCAT('%', #{emailstatus}), '%')
+                    </if>
+                    <if test="mobile != null and mobile != ''">
+                        and
+                        mobile like CONCAT(CONCAT('%', #{mobile}), '%')
+                    </if>
+                    <if test="mobilestatus != null and mobilestatus != ''">
+                        and
+                        mobilestatus like CONCAT(CONCAT('%', #{mobilestatus}), '%')
+                    </if>
+                    <if test="address != null and address != ''">
+                        and
+                        address like CONCAT(CONCAT('%', #{address}), '%')
+                    </if>
+                    <if test="createtime != null and createtime != ''">
+                        and
+                        createtime like CONCAT(CONCAT('%', #{createtime}), '%')
+                    </if>
+                    <if test="activetime != null and activetime != ''">
+                        and
+                        activetime like CONCAT(CONCAT('%', #{activetime}), '%')
+                    </if>
+                <if test="activeip != null and activeip != ''">
+                    and
+                    activeip like CONCAT(CONCAT('%', #{activeip}), '%')
+                </if>
+                    <if test="imgaddress != null and imgaddress != ''">
+                        and
+                        imgaddress like CONCAT(CONCAT('%', #{imgaddress}), '%')
+                    </if>
+                    <if test="introduce != null and introduce != ''">
+                        and
+                        introduce like CONCAT(CONCAT('%', #{introduce}), '%')
+                    </if>
+            </trim>
+        </where>
+    </select>
+
+    <select id="login" resultType="com.user.entity.User">
+        select
+          `Id`,`Name`,`Level`,`Birthday`,`Password`,`Passwordsalt`,`Email`,`Emailstatus`,`Mobile`,`Mobilestatus`,`Address`,`Createtime`,`Activetime`,`Activeip`,`Imgaddress`,`Introduce`
+        from User
+         where `Email` = #{email} or `Mobile` = #{mobile} and `Password` = #{password}
+    </select>
+
+</mapper>

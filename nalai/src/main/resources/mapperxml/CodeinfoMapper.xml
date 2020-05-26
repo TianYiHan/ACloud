@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nalai.mapper.CodeinfoMapper">
+
+    <!-- 结果集 -->
+    <resultMap id="CodeinfoResultMap" type="com.nalai.entity.Codeinfo">
+            <result column="id" property="id" javaType="java.lang.Integer" /><!-- 代码片段主键 -->
+            <result column="title" property="title" javaType="java.lang.String" /><!-- 代码标题 -->
+            <result column="language" property="language" javaType="java.lang.String" /><!-- 代码语言分类 -->
+            <result column="userid" property="userid" javaType="java.lang.String" /><!-- 创建此代码的用户id -->
+            <result column="code" property="code" javaType="java.lang.String" /><!-- 代码主体部分 -->
+            <result column="createtime" property="createtime" javaType="java.util.Date" /><!-- 创建时间 -->
+            <result column="nicecodecount" property="nicecodecount" javaType="java.lang.Integer" /><!-- 赞次数 -->
+            <result column="isok" property="isok" javaType="java.lang.Integer" /><!-- 是否合格1合格   0不合格  -->
+            <result column="introduce" property="introduce" javaType="java.lang.String" /><!-- 代码片段介绍 -->
+    </resultMap>
+
+    <!-- 新增信息 -->
+    <insert id="insertCodeinfo"  parameterType="com.nalai.entity.Codeinfo">
+        insert  into codeinfo (id,title,language,userid,code,createtime,nicecodecount,isok,introduce) values ()
+    </insert>
+
+
+    <!-- 删除信息 -->
+    <delete id="deleteCodeinfo"  parameterType="com.nalai.entity.Codeinfo">
+
+    </delete>
+
+    <!-- 更改信息 -->
+    <update id="updateCodeinfo"  parameterType="com.nalai.entity.Codeinfo">
+
+    </update>
+
+    <!-- 查询信息 -->
+    <select id="selectCodeinfoByParams" parameterType="map" resultType="com.nalai.entity.Codeinfo">
+
+    </select>
+
+</mapper>

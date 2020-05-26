@@ -33,7 +33,7 @@
 	  
 	  $("#getTables").click(function(){
 	      $.ajax({
-	  		url:"http://106.14.208.219:9090/DB/getTableinfo",
+	  		url:"http://localhost:8089/DB/getTableinfo",
 	  		type:"post",
 	  		data:{"host":$("#hostinput").val(),"port":$("#portinput").val(),"username":$("#usernameinput").val(),"password":$("#passwordinput").val(),"database":$("#databaseinput").val()},
 	  		dataType:"json",
@@ -82,7 +82,7 @@
 		  
 		  
 		  $.ajax({
-			  url:"http://106.14.208.219:9090/DB/creatJavaFile",
+			  url:"http://localhost:8089/DB/creatJavaFile",
 			  type:"post",
 			  data:{"host":$("#hostinput").val(),"port":$("#portinput").val(),"username":$("#usernameinput").val(),"password":$("#passwordinput").val(),"database":$("#databaseinput").val(),"needCreat":needCreat},
 			  dataType:"json",
@@ -91,7 +91,7 @@
 			  },
 			  error:function(XMLHttpRequest){
 	  			layer.alert(XMLHttpRequest.responseText, {icon: 1})
-				window.location.href = "http://106.14.208.219:9090/DB/downloadcode";
+				window.location.href = "http://localhost:8089/DB/downloadcode";
 			  }
 		  })
 		  
@@ -110,7 +110,7 @@
 					  <div class="layui-form-item">
 					    <label class="layui-form-label">数据库地址</label>
 					    <div class="layui-input-block">
-					      <input type="text"  id="hostinput"  name="title" required  lay-verify="required" value="htyderds.mysql.rds.aliyuncs.com" placeholder="请输入数据库连接地址" autocomplete="off" class="layui-input">
+					      <input type="text"  id="hostinput"  name="title" required  lay-verify="required" value="106.14.208.219" placeholder="请输入数据库连接地址" autocomplete="off" class="layui-input">
 					    </div>
 					  </div>
 					  
@@ -124,7 +124,7 @@
 					  <div class="layui-form-item">
 					    <label class="layui-form-label">连接用户名</label>
 					    <div class="layui-input-block">
-					      <input type="text"  id="usernameinput"  name="title" required  lay-verify="required" value="han" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+					      <input type="text"  id="usernameinput"  name="title" required  lay-verify="required" value="root" placeholder="请输入用户名" autocomplete="off" class="layui-input">
 					    </div>
 					  </div>
 					  
@@ -138,7 +138,7 @@
 					  <div class="layui-form-item">
 					    <label class="layui-form-label">数据库</label>
 					    <div class="layui-input-block">
-					      <input type="text" id="databaseinput"  name="title" required  lay-verify="required" value="xianyan" placeholder="请输入数据库名称" autocomplete="off" class="layui-input">
+					      <input type="text" id="databaseinput"  name="title" required  lay-verify="required" value="nalai" placeholder="请输入数据库名称" autocomplete="off" class="layui-input">
 					    </div>
 					  </div>
 					  

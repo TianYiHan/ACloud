@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nalai.mapper.MessageMapper">
+
+
+
+    <!-- 结果集 -->
+    <resultMap id="MessageResultMap" type="com.nalai.entity.Message">
+            <result column="id" property="id" javaType="java.lang.Integer" /><!-- 留言id -->
+            <result column="userid" property="userid" javaType="java.lang.String" /><!-- 留言的用户 -->
+            <result column="content" property="content" javaType="java.lang.String" /><!-- 留言内容 -->
+            <result column="time" property="time" javaType="java.util.Date" /><!-- 留言时间 -->
+            <result column="parentmessage" property="parentmessage" javaType="java.lang.Integer" /><!-- 父级留言，有此属性说明是回复 -->
+    </resultMap>
+
+    <!-- 新增信息 -->
+    <insert id="insertMessage"  parameterType="com.nalai.entity.Message">
+
+    </insert>
+
+
+    <!-- 删除信息 -->
+    <delete id="deleteMessage"  parameterType="com.nalai.entity.Message">
+
+    </delete>
+
+    <!-- 更改信息 -->
+    <update id="updateMessage"  parameterType="com.nalai.entity.Message">
+
+    </update>
+
+    <!-- 查询信息 -->
+    <select id="selectMessageByParams" parameterType="map" resultType="com.nalai.entity.Message">
+
+    </select>
+
+</mapper>
