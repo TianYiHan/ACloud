@@ -2,7 +2,7 @@ package com.user.service.impl;//package自定义
 
 
 import com.user.entity.User;
-import com.user.mapper.UserMapper;
+import com.user.dao.UserMapper;
 import com.user.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.util.Map;
 * Date:Mon May 25 10:42:41 CST 2020
 * 表注释:
 */
-@Service
+@Service(value = "userService")
 public class UserServiceImpl implements UserService {
 
     @Autowired

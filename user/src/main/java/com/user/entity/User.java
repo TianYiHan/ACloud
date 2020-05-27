@@ -128,4 +128,26 @@ public class User {
     public void setActiveip(String activeip) {
         this.activeip = activeip;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", level='" + level + '\'' +
+                ", birthday=" + birthday +
+                ", password='" + password + '\'' +
+                ", passwordsalt='" + passwordsalt + '\'' +
+                ", email='" + email + '\'' +
+                ", emailstatus='" + emailstatus + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", mobilestatus='" + mobilestatus + '\'' +
+                ", address='" + address + '\'' +
+                ", createtime=" + createtime +
+                ", activetime='" + activetime + '\'' +
+                ", activeip='" + activeip + '\'' +
+                ", imgaddress='" + imgaddress + '\'' +
+                ", introduce='" + introduce + '\'' +
+                '}';
+    }
 }

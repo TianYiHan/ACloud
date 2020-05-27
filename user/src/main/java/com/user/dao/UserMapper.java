@@ -1,6 +1,8 @@
-package com.user.mapper;//package自定义
+package com.user.dao;//package自定义
 
 import com.user.entity.User;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
@@ -11,6 +13,8 @@ import java.util.Map;
 * Date:Mon May 25 10:42:41 CST 2020
 * 表注释:
 */
+@Mapper
+@Repository
 public interface UserMapper {
 
     /**

@@ -1,6 +1,7 @@
 package com.user.service;//package自定义
 
 import com.user.entity.User;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
