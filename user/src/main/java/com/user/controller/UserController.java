@@ -2,10 +2,16 @@ package com.user.controller;//package自定义
 
 import com.user.entity.User;
 import com.user.service.UserService;
-import com.user.utils.MessageUtils;
+import com.user.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
 * Author:https://github.com/TianYiHan
@@ -20,6 +26,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
     /**
      * 登录
      * @author:https://github.com/TianYiHan
@@ -30,8 +39,6 @@ public class UserController {
     public String login(@RequestParam Map params){
         String mobile = String.valueOf(params.get("mobile"));
         String password = String.valueOf(params.get("password"));
-        String code = MessageUtils.sendcode(String.valueOf(params.get("mobile")));
-
 
         //获取 手机  密码（明文）
         //md5(倒序排列密码然后+MD5加密的手机号码)
@@ -39,6 +46,27 @@ public class UserController {
         return "true";
     };
 
+
+    /**
+     * 登录
+     * @author:https://github.com/TianYiHan
+     * @date: Mon May 25 10:42:41 CST 2020
+     * @return: int
+     */   //where  `Mobile` = #{mobile} and `Password` = #{password}
+    @PostMapping(value = "/getverificationCode")
+    public String getverificationCode(@RequestParam Map params, HttpServletRequest request){
+        String mobile = String.valueOf(params.get("mobile"));
+        String yzm=String.valueOf(new Random().nextInt(999999 - 100000) + 100000);//生成6位随机数
+        String sessionid=request.getSession().getId();
+
+        ValueOperations ops = stringRedisTemplate.opsForValue();//StringRedisTemplate 或者 RedisTemplate
+
+        ops.set(sessionid,yzm, 600L, TimeUnit.SECONDS);//设置有效期 600秒
+
+        System.out.println("redis的key："+sessionid+"，验证码为："+yzm+"有效期10分钟");
+
+        return "true";
+    };
 
     /**
      * registered注册

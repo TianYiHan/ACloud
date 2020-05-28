@@ -25,7 +25,14 @@
             <artifactId>tencentcloud-sdk-java</artifactId>
             <version>3.1.58</version><!-- 注：此处仅为示例版本号，请访问 https://mvnrepository.com/artifact/com.tencentcloudapi/tencentcloud-sdk-java 获取最新版本号并替换 -->
         </dependency>
-
+        <dependency><!--Spring Data Redis-->
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency><!--连接池-->
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-generator</artifactId>
