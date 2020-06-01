@@ -12,6 +12,7 @@ public class User {
         private String id;    //用户唯一id
         private String name;    //用户名称
         private String level;    //用户等级
+        private int money;  //用户金额
         private Object birthday;    //用户生日
         private String password;    //用户密码
         private String passwordsalt;    //用户密码加点盐
@@ -21,7 +22,7 @@ public class User {
         private String mobilestatus;    //用户电话是否验证
         private String address;    //用户地址
         private Date createtime;    //用户创建时间
-        private String activetime;    //用户活跃时间（增删改查时更新）
+        private Date activetime;    //用户活跃时间（增删改查时更新）
         private String activeip;    //用户活跃ip（增删改查时更新）
         private String imgaddress;    //用户头像地址
         private String introduce;    //用户简介
@@ -64,7 +65,7 @@ public class User {
         public Date getCreatetime() {
             return createtime;
         }
-        public String getActivetime() {
+        public Date getActivetime() {
             return activetime;
         }
         public String getImgaddress() {
@@ -110,7 +111,7 @@ public class User {
         public void setCreatetime(Date createtime) {
             this.createtime = createtime;
         }
-        public void setActivetime(String activetime) {
+        public void setActivetime(Date activetime) {
             this.activetime = activetime;
         }
         public void setImgaddress(String imgaddress) {
@@ -129,12 +130,23 @@ public class User {
         this.activeip = activeip;
     }
 
+
+
+    public int getMoney() {
+        return money;
+    }
+
+    public void setMoney(int money) {
+        this.money = money;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", level='" + level + '\'' +
+                ", money=" + money +
                 ", birthday=" + birthday +
                 ", password='" + password + '\'' +
                 ", passwordsalt='" + passwordsalt + '\'' +
@@ -144,7 +156,7 @@ public class User {
                 ", mobilestatus='" + mobilestatus + '\'' +
                 ", address='" + address + '\'' +
                 ", createtime=" + createtime +
-                ", activetime='" + activetime + '\'' +
+                ", activetime=" + activetime +
                 ", activeip='" + activeip + '\'' +
                 ", imgaddress='" + imgaddress + '\'' +
                 ", introduce='" + introduce + '\'' +

@@ -4,24 +4,24 @@
 
     <!-- 查询字段 -->
     <sql id="User_Column_List">
-        `Id`,`Name`,`Level`,`Birthday`,`Password`,`Passwordsalt`,`Email`,`Emailstatus`,`Mobile`,`Mobilestatus`,`Address`,`Createtime`,`Activetime`,`activeip`,`Imgaddress`,`Introduce`
+        `Id`,`Name`,`Level`,`money`,`Birthday`,`Password`,`Passwordsalt`,`Email`,`Emailstatus`,`Mobile`,`Mobilestatus`,`Address`,`Createtime`,`Activetime`,`activeip`,`Imgaddress`,`Introduce`
     </sql>
 
     <!-- 新增信息 -->
     <insert id="insertUser"  parameterType="com.user.entity.User">
-        insert into User (`id`,`name`,`level`,`birthday`,`password`,`passwordsalt`,`email`,`emailstatus`,`mobile`,`mobilestatus`,`address`,`createtime`,`activetime`,`activeip`,`imgaddress`,`introduce`) values (#{id},#{name},#{level},#{birthday},#{password},#{passwordsalt},#{email},#{emailstatus},#{mobile},#{mobilestatus},#{address},#{createtime},#{activetime},#{activeip},#{imgaddress},#{introduce})
+        insert into `user` (`id`,`name`,`level`,`money`,`birthday`,`password`,`passwordsalt`,`email`,`emailstatus`,`mobile`,`mobilestatus`,`address`,`createtime`,`activetime`,`activeip`,`imgaddress`,`introduce`) values (#{id},#{name},#{level},#{money},#{birthday},#{password},#{passwordsalt},#{email},#{emailstatus},#{mobile},#{mobilestatus},#{address},#{createtime},#{activetime},#{activeip},#{imgaddress},#{introduce})
     </insert>
 
 
     <!-- 删除信息 -->
     <delete id="deleteUser"  parameterType="com.user.entity.User">
-        delete from User where 1=1
+        delete from `user` where 1=1
     </delete>
 
     <!-- 更改信息 -->
     <update id="updateUser"  parameterType="com.user.entity.User">
         update
-        User
+        `user`
         set
         <trim suffixOverrides=",">
                 <if test="id != null">
@@ -32,6 +32,9 @@
                 </if>
                 <if test="level != null">
                     level = #{level},
+                </if>
+                <if test="money != null">
+                    level = #{money},
                 </if>
                 <if test="birthday != null">
                     birthday = #{birthday},
@@ -81,7 +84,7 @@
     <select id="selectUserByParams" parameterType="java.util.Map" resultType="com.user.entity.User">
         select
         <include refid="User_Column_List" />
-        from User
+        from `user`
         <where>
             <trim prefixOverrides="and">
                     <if test="id != null and id != ''">
@@ -95,6 +98,10 @@
                     <if test="level != null and level != ''">
                         and
                         level like CONCAT(CONCAT('%', #{level}), '%')
+                    </if>
+                    <if test="money != null and money != ''">
+                        and
+                        money like CONCAT(CONCAT('%', #{money}), '%')
                     </if>
                     <if test="birthday != null and birthday != ''">
                         and
@@ -154,9 +161,10 @@
 
     <select id="login"  resultType="com.user.entity.User">
         select
-          `Id`,`Name`,`Level`,`Birthday`,`Password`,`Passwordsalt`,`Email`,`Emailstatus`,`Mobile`,`Mobilestatus`,`Address`,`Createtime`,`Activetime`,`Activeip`,`Imgaddress`,`Introduce`
-        from User
-         where  `Mobile` = #{mobile} and `Password` = #{password}
+          `Id`,`Name`,`Level`,`money`,`Birthday`,`Password`,`Passwordsalt`,`Email`,`Emailstatus`,`Mobile`,`Mobilestatus`,`Address`,`Createtime`,`Activetime`,`Activeip`,`Imgaddress`,`Introduce`
+        from `user`
+         where  `Mobile` = #{mobile}
+
     </select>
 
 </mapper>

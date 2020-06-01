@@ -33,6 +33,7 @@ public class UserServiceImpl implements UserService {
                 res=mapper.insertUser(bean);
  			}
  		} catch (Exception e) {
+ 		    e.printStackTrace();
              //手动事务回滚
              TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
  	    }

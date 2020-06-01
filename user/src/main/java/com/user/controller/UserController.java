@@ -1,14 +1,19 @@
 package com.user.controller;//package自定义
 
+import com.alibaba.fastjson.JSONObject;
 import com.user.entity.User;
 import com.user.service.UserService;
 import com.user.utils.MessageUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.util.DigestUtils;
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -36,36 +41,102 @@ public class UserController {
      * @return: int
      */   //where  `Mobile` = #{mobile} and `Password` = #{password}
     @PostMapping(value = "/login")
-    public String login(@RequestParam Map params){
-        String mobile = String.valueOf(params.get("mobile"));
-        String password = String.valueOf(params.get("password"));
+    public String login(@RequestParam Map params,HttpServletRequest request){
+        String mobile = String.valueOf(params.get("mobile"));//获取 手机  密码（明文）
+        String password = String.valueOf(params.get("password"));//获取 手机  密码（明文）
+        String smscode = String.valueOf(params.get("smscode"));//获取验证码
+        User user =null;
+        if (mobile!=null&&mobile!=""&&password!=null&&password!=""){//手机和密码输入判空
+            HashMap<String, String> map = new HashMap<>();
+            map.put("mobile",mobile);
+            user = userService.login(map);
+            if (user!=null){
+                if (smscode!=null&&smscode!=""){//验证码验证
+                        ValueOperations ops = stringRedisTemplate.opsForValue();//StringRedisTemplate 或者 RedisTemplate 工具类
+                        String redisverificationcode = String.valueOf(ops.get(mobile));//去redis获取验证码
+                        if (redisverificationcode!=null&&redisverificationcode!=""){
+                            if (redisverificationcode.equals(smscode)){//验证码输入正确
+                                //对比密码
+                                String mobilemd5 = DigestUtils.md5DigestAsHex(mobile.getBytes());
+                                //排列密码+盐  然后MD5加密 存入数据库
+                                String passwordmd5 = DigestUtils.md5DigestAsHex((password+mobilemd5).getBytes());
+                                if (!passwordmd5.equals(String.valueOf(user.getPassword()))){
+                                    System.out.println("密码错误");
+                                    return JSONObject.toJSONString("passworderror");
+                                }else {//密码正确，更新活跃状态
+                                    user.setActiveip(getIpAddress(request));//更新用户最后活跃ip
+                                    user.setActivetime(new Date());//更新用户活跃时间信息
+                                    userService.modifyUser(user);
+                                    return JSONObject.toJSONString(user);
+                                }
+                            }else {//验证码输入错误
+                                System.out.println("redis里获取到了 ,输入的不对");
+                                System.out.println("redis里的是："+redisverificationcode);
+                                return JSONObject.toJSONString("Wrong smscode");
+                            }
+                        }else{
+                            return JSONObject.toJSONString("null smscode");
+                        }
 
-        //获取 手机  密码（明文）
-        //md5(倒序排列密码然后+MD5加密的手机号码)
-        //对比数据库数据的手机，密码是否正确
-        return "true";
+                }else{//不要验证码验证
+
+                        //账户存在 需要判断
+                        if (2592000<(new Date().getTime()-user.getActivetime().getTime())){//上次活跃时间大于一个月了
+                            System.out.println("上次活跃时间大于一个月了，需要短信验证");
+                            return JSONObject.toJSONString("needSMS");//需要短信验证
+                        }else if (!getIpAddress(request).equals(user.getActiveip())){//最后活跃ip和本次登录ip比较
+                            System.out.println("最后活跃ip和本次登录ip不一致，需要短信验证");
+                            return JSONObject.toJSONString("needSMS");//需要短信验证
+                        }else {
+                            //对比密码
+                            //盐=手机号码md5加密  盐存入数据库
+                            String mobilemd5 = DigestUtils.md5DigestAsHex(mobile.getBytes());
+                            //排列密码+盐  然后MD5加密 存入数据库
+                            String passwordmd5 = DigestUtils.md5DigestAsHex((password+mobilemd5).getBytes());
+                            if (!passwordmd5.equals(String.valueOf(user.getPassword()))){
+                                System.out.println("密码错误");
+                                return JSONObject.toJSONString("passworderror");
+                            }else {//密码正确，更新活跃状态
+                                user.setActiveip(getIpAddress(request));//更新用户最后活跃ip
+                                user.setActivetime(new Date());//更新用户活跃时间信息
+                                userService.modifyUser(user);
+                                return JSONObject.toJSONString(user);
+                            }
+                        }
+                }
+            }else {//user==null
+                return JSONObject.toJSONString("Null Account");
+            }
+        }else{
+            return JSONObject.toJSONString("Params Lack");
+        }
     };
 
 
     /**
-     * 登录
+     * 获取验证码
      * @author:https://github.com/TianYiHan
      * @date: Mon May 25 10:42:41 CST 2020
-     * @return: int
-     */   //where  `Mobile` = #{mobile} and `Password` = #{password}
+     */
     @PostMapping(value = "/getverificationCode")
     public String getverificationCode(@RequestParam Map params, HttpServletRequest request){
-        String mobile = String.valueOf(params.get("mobile"));
-        String yzm=String.valueOf(new Random().nextInt(999999 - 100000) + 100000);//生成6位随机数
-        String sessionid=request.getSession().getId();
+        String mobile = String.valueOf(params.get("mobile"));//获取手机
+        String why = String.valueOf(params.get("why"));//获取原因
 
-        ValueOperations ops = stringRedisTemplate.opsForValue();//StringRedisTemplate 或者 RedisTemplate
+        //why  = "Login"  "Registered" "RetrievePassword" 2020.06.01
 
-        ops.set(sessionid,yzm, 600L, TimeUnit.SECONDS);//设置有效期 600秒
-
-        System.out.println("redis的key："+sessionid+"，验证码为："+yzm+"有效期10分钟");
-
-        return "true";
+        if (why!=null&&why!=""&&mobile!=null&&mobile!=""&&mobile.matches("1[3456789]\\d{9}$")){
+            String yzm=String.valueOf(new Random().nextInt(999999 - 100000) + 100000);//生成6位随机数
+            ValueOperations ops = stringRedisTemplate.opsForValue();//StringRedisTemplate 或者 RedisTemplate
+            //发送短信
+            //发送短信
+            //发送短信
+            ops.set(mobile+why,yzm,300L,TimeUnit.SECONDS);//设置有效期 300秒  k,v   手机号码，验证码，有效期
+            return JSONObject.toJSONString("短信验证码已发送，有效期5分钟，请注意查收~");
+        }else {
+            System.out.println("参数有误！");
+            return JSONObject.toJSONString("Wrong parameter");
+        }
     };
 
     /**
@@ -75,80 +146,99 @@ public class UserController {
      * @return: int
      */
     @PostMapping(value = "/registered")
-    public String registered(@RequestBody Map params){
-        System.out.println(params);
-        //获取手机号和密码
-        //发送短信验证码
-        //验证验证码是否正确
-        //盐=手机号码md5加密  盐存入数据库
-        //正确的话倒序排列密码+盐  然后MD5加密 存入数据库
-        //密码= MD5(倒序排列+MD5(盐))
-        //存入明文手机号码    加密的盐  加密的密码
-        return "true";
+    public String registered(@RequestParam Map params,HttpServletRequest request){
+        ValueOperations ops = stringRedisTemplate.opsForValue();//StringRedisTemplate 或者 RedisTemplate 工具类
+        String mobile = String.valueOf(params.get("mobile"));//获取手机
+        String password = String.valueOf(params.get("password"));//获取密码
+        String verificationcode = String.valueOf(params.get("verificationcode"));//获取验证码
+        if (mobile!=null&&mobile!=""&&password!=null&&password!=""&&verificationcode!=null&&verificationcode!=""){
+
+            String redisverificationcode = String.valueOf(ops.get(mobile));//去redis获取验证码
+            if (redisverificationcode!=null&&redisverificationcode!=""){
+                if (!redisverificationcode.equals(verificationcode)){
+                    //用户输入错误
+                    System.out.println("redis里获取到了 ,输入的不对");
+                    System.out.println("redis里的是："+redisverificationcode);
+                    return JSONObject.toJSONString("Wrong smscode");
+                }else {
+                    //盐=手机号码md5加密  盐存入数据库
+                    String mobilemd5 = DigestUtils.md5DigestAsHex(mobile.getBytes());
+                    //排列密码+盐  然后MD5加密 存入数据库
+                    String passwordmd5 = DigestUtils.md5DigestAsHex((password+mobilemd5).getBytes());
+                    //密码= MD5(排列+MD5(盐))
+                    //mobile    mobilemd5   passwordmd5
+                    User user= new User();
+                    user.setMobile(mobile);//手机号码
+                    user.setMobilestatus("ok");//手机号码已经验证
+                    user.setCreatetime(new Date());//注册时间
+                    user.setActivetime(new Date());//最后活跃时间
+                    user.setActiveip(getIpAddress(request));//最后活跃ip
+                    user.setImgaddress("defautlimg");//默认头像
+                    user.setPasswordsalt(mobilemd5);//盐
+                    user.setPassword(passwordmd5);//MD5密码
+                    user.setName("新用户"+mobile.substring(3,11));//用户名为手机号码
+                    user.setLevel("1");//初始等级
+                    user.setEmailstatus("no");//初始邮箱状态
+                    user.setAddress("未知地区");//初始地区
+                    user.setIntroduce("暂无简介");//初始简介
+                    user.setMoney(0);//用户初始金额
+                    if (userService.addUser(user) == 1) {
+                        ops.set(mobile,"Used", 1L, TimeUnit.SECONDS);//设置有效期 1秒
+                        return JSONObject.toJSONString("registered user success");
+                    }else{
+                        return JSONObject.toJSONString("registered user error");
+                    }
+                }
+            }else{
+                return JSONObject.toJSONString("null smscode");
+            }
+        }else {
+            return JSONObject.toJSONString("Wrong parameter");//参数错误
+        }
     };
+
+
+
+
 
     /**
-    * 添加
-    * @author:https://github.com/TianYiHan
-    * @date: Mon May 25 10:42:41 CST 2020
-    * @return: int
-    */
-    @PostMapping(value = "/insertUser")
-    public String insertUser(@RequestBody  Map params){
-
-        //获取手机号和密码
-        //发送短信验证码
-        //验证验证码是否正确
-        //盐=手机号码md5加密  盐存入数据库
-        //正确的话倒序排列密码+盐  然后MD5加密 存入数据库
-        //密码= MD5(倒序排列+MD5(盐))
-        //存入明文手机号码    加密的盐  加密的密码
-        return "true";
-    };
-
-
-    /**
-    * 删除User
-    * @param  params
-    * @return
-    */
-    @DeleteMapping(value = "/deleteUser")
-    public String deleteUser(@RequestBody Map params){
-
-        //do
-
-        return "true";
-
-    };
-
-    /**
-    * 修改信息
-    * @param bean
-    * @return
-    */
-    @PutMapping(value = "/updateUser")
-    public String updateUser(@RequestBody User bean){
-
-        //do
-
-        return "true";
-
-    };
-
-    /**
-    * 查询信息
-    * @param params
-    * @return
-    *get请求，参数不能是json(application/json;charset=utf-8)格式，只能是表单(application/x-www-form-urlencoded)格式
-    */
-    @PostMapping(value = "/selectUserByParams")
-    public String selectUserByParams(@RequestBody Map params){
-         //
-
-        return "json List<User>";
-    };
-
-
+     * 获取Ip地址
+     * @param request
+     * @return
+     */
+    private static String getIpAddress(HttpServletRequest request) {
+        String Xip = request.getHeader("X-Real-IP");
+        String XFor = request.getHeader("X-Forwarded-For");
+        if(StringUtils.isNotEmpty(XFor) && !"unKnown".equalsIgnoreCase(XFor)){
+            //多次反向代理后会有多个ip值，第一个ip才是真实ip
+            int index = XFor.indexOf(",");
+            if(index != -1){
+                return XFor.substring(0,index);
+            }else{
+                return XFor;
+            }
+        }
+        XFor = Xip;
+        if(StringUtils.isNotEmpty(XFor) && !"unKnown".equalsIgnoreCase(XFor)){
+            return XFor;
+        }
+        if (StringUtils.isBlank(XFor) || "unknown".equalsIgnoreCase(XFor)) {
+            XFor = request.getHeader("Proxy-Client-IP");
+        }
+        if (StringUtils.isBlank(XFor) || "unknown".equalsIgnoreCase(XFor)) {
+            XFor = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (StringUtils.isBlank(XFor) || "unknown".equalsIgnoreCase(XFor)) {
+            XFor = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (StringUtils.isBlank(XFor) || "unknown".equalsIgnoreCase(XFor)) {
+            XFor = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (StringUtils.isBlank(XFor) || "unknown".equalsIgnoreCase(XFor)) {
+            XFor = request.getRemoteAddr();
+        }
+        return XFor;
+    }
 
 
 
