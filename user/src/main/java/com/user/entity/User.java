@@ -13,7 +13,7 @@ public class User {
         private String name;    //用户名称
         private String level;    //用户等级
         private int money;  //用户金额
-        private Object birthday;    //用户生日
+        private Date birthday;    //用户生日
         private String password;    //用户密码
         private String passwordsalt;    //用户密码加点盐
         private String email;    //用户邮箱
@@ -26,10 +26,12 @@ public class User {
         private String activeip;    //用户活跃ip（增删改查时更新）
         private String imgaddress;    //用户头像地址
         private String introduce;    //用户简介
+        private int pwderrorcount; //用户登录密码错误次数
 
 
 
-        public String getId() {
+
+    public String getId() {
             return id;
         }
         public String getName() {
@@ -38,7 +40,7 @@ public class User {
         public String getLevel() {
             return level;
         }
-        public Object getBirthday() {
+        public Date getBirthday() {
             return birthday;
         }
         public String getPassword() {
@@ -84,7 +86,7 @@ public class User {
         public void setLevel(String level) {
             this.level = level;
         }
-        public void setBirthday(Object birthday) {
+        public void setBirthday(Date birthday) {
             this.birthday = birthday;
         }
         public void setPassword(String password) {
@@ -161,5 +163,13 @@ public class User {
                 ", imgaddress='" + imgaddress + '\'' +
                 ", introduce='" + introduce + '\'' +
                 '}';
+    }
+
+    public int getPwderrorcount() {
+        return pwderrorcount;
+    }
+
+    public void setPwderrorcount(int pwderrorcount) {
+        this.pwderrorcount = pwderrorcount;
     }
 }

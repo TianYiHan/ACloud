@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/user")
 @CrossOrigin
-public class UserController {
+public class UserController{
 
     @Autowired
     private UserService userService;
@@ -42,51 +42,105 @@ public class UserController {
      */   //where  `Mobile` = #{mobile} and `Password` = #{password}
     @PostMapping(value = "/login")
     public String login(@RequestParam Map params,HttpServletRequest request){
+
         String mobile = String.valueOf(params.get("mobile"));//获取 手机  密码（明文）
         String password = String.valueOf(params.get("password"));//获取 手机  密码（明文）
         String smscode = String.valueOf(params.get("smscode"));//获取验证码
         User user =null;
-        if (mobile!=null&&mobile!=""&&password!=null&&password!=""){//手机和密码输入判空
+        if (mobile!=null&&mobile!=""&&mobile.matches("1[3456789]\\d{9}$")&&password!=null||smscode!=null){//手机和密码输入判空
             HashMap<String, String> map = new HashMap<>();
             map.put("mobile",mobile);
             user = userService.login(map);
             if (user!=null){
-                if (smscode!=null&&smscode!=""){//验证码验证
+                if (smscode!=null&&smscode!=""&&smscode!="null"&&!smscode.equals("null")){//验证码登录
+                        System.err.println(smscode);
+                        System.err.println("验证码登录");
                         ValueOperations ops = stringRedisTemplate.opsForValue();//StringRedisTemplate 或者 RedisTemplate 工具类
                         String redisverificationcode = String.valueOf(ops.get(mobile));//去redis获取验证码
                         if (redisverificationcode!=null&&redisverificationcode!=""){
-                            if (redisverificationcode.equals(smscode)){//验证码输入正确
-                                //对比密码
-                                String mobilemd5 = DigestUtils.md5DigestAsHex(mobile.getBytes());
-                                //排列密码+盐  然后MD5加密 存入数据库
-                                String passwordmd5 = DigestUtils.md5DigestAsHex((password+mobilemd5).getBytes());
-                                if (!passwordmd5.equals(String.valueOf(user.getPassword()))){
-                                    System.out.println("密码错误");
-                                    return JSONObject.toJSONString("passworderror");
-                                }else {//密码正确，更新活跃状态
-                                    user.setActiveip(getIpAddress(request));//更新用户最后活跃ip
-                                    user.setActivetime(new Date());//更新用户活跃时间信息
-                                    userService.modifyUser(user);
-                                    return JSONObject.toJSONString(user);
-                                }
+                            if (redisverificationcode.equals(smscode)){//验证码输入正确，允许登录
+                                System.out.println("验证码输入正确，允许登录");
+                                user.setActiveip(getIpAddress(request));//更新用户最后活跃ip
+                                user.setActivetime(new Date());//更新用户活跃时间信息
+                                user.setPwderrorcount(0);//更新密码错误次数为0
+                                userService.modifyUser(user);
+                                HashMap<String, Object> rtnmap = new HashMap<>();
+                                rtnmap.put("status","ok");
+                                rtnmap.put("msg","");
+                                rtnmap.put("SMS","");
+                                rtnmap.put("why","");
+                                rtnmap.put("phone","");
+                                rtnmap.put("user",user);
+                                return JSONObject.toJSONString(rtnmap);
                             }else {//验证码输入错误
                                 System.out.println("redis里获取到了 ,输入的不对");
                                 System.out.println("redis里的是："+redisverificationcode);
-                                return JSONObject.toJSONString("Wrong smscode");
+                                HashMap<String, Object> rtnmap = new HashMap<>();
+                                rtnmap.put("status","error");
+                                rtnmap.put("msg","Wrong SMScode");
+                                rtnmap.put("SMS","");
+                                rtnmap.put("why","");
+                                rtnmap.put("phone","");
+                                rtnmap.put("user",user);
+                                return JSONObject.toJSONString(rtnmap);
                             }
                         }else{
-                            return JSONObject.toJSONString("null smscode");
+                            HashMap<String, Object> rtnmap = new HashMap<>();
+                            rtnmap.put("status","error");
+                            rtnmap.put("msg","Null SMScode");
+                            rtnmap.put("SMS","");
+                            rtnmap.put("why","");
+                            rtnmap.put("phone","");
+                            rtnmap.put("user",user);
+                            return JSONObject.toJSONString(rtnmap);
                         }
 
-                }else{//不要验证码验证
-
+                }else{//不要验证码验证 密码登录
+                    System.err.println("不要验证码验证 密码登录");
                         //账户存在 需要判断
-                        if (2592000<(new Date().getTime()-user.getActivetime().getTime())){//上次活跃时间大于一个月了
+                    System.out.println((new Date().getTime()-user.getActivetime().getTime()));
+                        if (2592000000L<(new Date().getTime()-user.getActivetime().getTime())){//上次活跃时间大于一个月了
                             System.out.println("上次活跃时间大于一个月了，需要短信验证");
-                            return JSONObject.toJSONString("needSMS");//需要短信验证
+                            HashMap<String, Object> yzmmap = new HashMap<>();//发送短信验证码
+                            yzmmap.put("mobile",mobile);//发送短信验证码
+                            yzmmap.put("why","longtime");//发送短信验证码
+                            getverificationCode(yzmmap,request);//发送短信验证码
+                            HashMap<String, Object> rtnmap = new HashMap<>();
+                            rtnmap.put("status","error");
+                            rtnmap.put("msg","longtime");
+                            rtnmap.put("SMS","yes");
+                            rtnmap.put("why","longtime");
+                            rtnmap.put("phone",mobile.substring(7,11));
+                            rtnmap.put("user","");
+                            return JSONObject.toJSONString(rtnmap);//需要短信验证
+                        }else if (user.getPwderrorcount()>4){//密码错误大于5次
+                            System.out.println("密码错误大于5次，需要短信验证");
+                            HashMap<String, Object> yzmmap = new HashMap<>();//发送短信验证码
+                            yzmmap.put("mobile",mobile);//发送短信验证码
+                            yzmmap.put("why","manyerror");//发送短信验证码
+                            getverificationCode(yzmmap,request);//发送短信验证码
+                            HashMap<String, Object> rtnmap = new HashMap<>();
+                            rtnmap.put("status","error");
+                            rtnmap.put("msg","manyerror");
+                            rtnmap.put("SMS","yes");
+                            rtnmap.put("why","manyerror");
+                            rtnmap.put("phone",mobile.substring(7,11));
+                            rtnmap.put("user","");
+                            return JSONObject.toJSONString(rtnmap);//需要短信验证
                         }else if (!getIpAddress(request).equals(user.getActiveip())){//最后活跃ip和本次登录ip比较
                             System.out.println("最后活跃ip和本次登录ip不一致，需要短信验证");
-                            return JSONObject.toJSONString("needSMS");//需要短信验证
+                            HashMap<String, Object> yzmmap = new HashMap<>();//发送短信验证码
+                            yzmmap.put("mobile",mobile);//发送短信验证码
+                            yzmmap.put("why","newip");//发送短信验证码
+                            getverificationCode(yzmmap,request);//发送短信验证码
+                            HashMap<String, Object> rtnmap = new HashMap<>();
+                            rtnmap.put("status","error");
+                            rtnmap.put("msg","newip");
+                            rtnmap.put("SMS","yes");
+                            rtnmap.put("why","newip");
+                            rtnmap.put("phone",mobile.substring(7,11));
+                            rtnmap.put("user","");
+                            return JSONObject.toJSONString(rtnmap);//需要短信验证
                         }else {
                             //对比密码
                             //盐=手机号码md5加密  盐存入数据库
@@ -94,13 +148,31 @@ public class UserController {
                             //排列密码+盐  然后MD5加密 存入数据库
                             String passwordmd5 = DigestUtils.md5DigestAsHex((password+mobilemd5).getBytes());
                             if (!passwordmd5.equals(String.valueOf(user.getPassword()))){
-                                System.out.println("密码错误");
-                                return JSONObject.toJSONString("passworderror");
+                                user.setPwderrorcount(user.getPwderrorcount()+1);
+                                userService.modifyUser(user);//密码错误次数+1
+
+                                HashMap<String, Object> rtnmap = new HashMap<>();
+                                rtnmap.put("status","error");
+                                rtnmap.put("msg","passworderror");
+                                rtnmap.put("SMS","");
+                                rtnmap.put("why","");
+                                rtnmap.put("phone","");
+                                rtnmap.put("user","");
+
+                                return JSONObject.toJSONString(rtnmap);
                             }else {//密码正确，更新活跃状态
                                 user.setActiveip(getIpAddress(request));//更新用户最后活跃ip
                                 user.setActivetime(new Date());//更新用户活跃时间信息
+                                user.setPwderrorcount(0);//更新密码错误次数为0
                                 userService.modifyUser(user);
-                                return JSONObject.toJSONString(user);
+                                HashMap<String, Object> rtnmap = new HashMap<>();
+                                rtnmap.put("status","ok");
+                                rtnmap.put("msg","");
+                                rtnmap.put("SMS","");
+                                rtnmap.put("why","");
+                                rtnmap.put("phone","");
+                                rtnmap.put("user",user);
+                                return JSONObject.toJSONString(rtnmap);
                             }
                         }
                 }
@@ -137,6 +209,7 @@ public class UserController {
             System.out.println("参数有误！");
             return JSONObject.toJSONString("Wrong parameter");
         }
+
     };
 
     /**

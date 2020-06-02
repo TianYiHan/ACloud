@@ -4,12 +4,12 @@
 
     <!-- 查询字段 -->
     <sql id="User_Column_List">
-        `Id`,`Name`,`Level`,`money`,`Birthday`,`Password`,`Passwordsalt`,`Email`,`Emailstatus`,`Mobile`,`Mobilestatus`,`Address`,`Createtime`,`Activetime`,`activeip`,`Imgaddress`,`Introduce`
+        `Id`,`Name`,`Level`,`money`,`Birthday`,`Password`,`Passwordsalt`,`Email`,`Emailstatus`,`Mobile`,`Mobilestatus`,`Address`,`Createtime`,`Activetime`,`activeip`,`pwderrorcount`,`Imgaddress`,`Introduce`
     </sql>
 
     <!-- 新增信息 -->
     <insert id="insertUser"  parameterType="com.user.entity.User">
-        insert into `user` (`id`,`name`,`level`,`money`,`birthday`,`password`,`passwordsalt`,`email`,`emailstatus`,`mobile`,`mobilestatus`,`address`,`createtime`,`activetime`,`activeip`,`imgaddress`,`introduce`) values (#{id},#{name},#{level},#{money},#{birthday},#{password},#{passwordsalt},#{email},#{emailstatus},#{mobile},#{mobilestatus},#{address},#{createtime},#{activetime},#{activeip},#{imgaddress},#{introduce})
+        insert into `user` (`id`,`name`,`level`,`money`,`birthday`,`password`,`passwordsalt`,`email`,`emailstatus`,`mobile`,`mobilestatus`,`address`,`createtime`,`activetime`,`activeip`,`pwderrorcount`,`imgaddress`,`introduce`) values (#{id},#{name},#{level},#{money},#{birthday},#{password},#{passwordsalt},#{email},#{emailstatus},#{mobile},#{mobilestatus},#{address},#{createtime},#{activetime},#{activeip},#{pwderrorcount},#{imgaddress},#{introduce})
     </insert>
 
 
@@ -69,6 +69,9 @@
                 <if test="activeip != null">
                     activeip = #{activeip},
                 </if>
+            <if test="pwderrorcount != null">
+                pwderrorcount = #{pwderrorcount},
+            </if>
                 <if test="imgaddress != null">
                     imgaddress = #{imgaddress},
                 </if>
@@ -147,6 +150,10 @@
                     and
                     activeip like CONCAT(CONCAT('%', #{activeip}), '%')
                 </if>
+                <if test="pwderrorcount != null and pwderrorcount != ''">
+                    and
+                    pwderrorcount like CONCAT(CONCAT('%', #{pwderrorcount}), '%')
+                </if>
                     <if test="imgaddress != null and imgaddress != ''">
                         and
                         imgaddress like CONCAT(CONCAT('%', #{imgaddress}), '%')
@@ -161,7 +168,7 @@
 
     <select id="login"  resultType="com.user.entity.User">
         select
-          `Id`,`Name`,`Level`,`money`,`Birthday`,`Password`,`Passwordsalt`,`Email`,`Emailstatus`,`Mobile`,`Mobilestatus`,`Address`,`Createtime`,`Activetime`,`Activeip`,`Imgaddress`,`Introduce`
+          `Id`,`Name`,`Level`,`money`,`Birthday`,`Password`,`Passwordsalt`,`Email`,`Emailstatus`,`Mobile`,`Mobilestatus`,`Address`,`Createtime`,`Activetime`,`Activeip`,`pwderrorcount`,`Imgaddress`,`Introduce`
         from `user`
          where  `Mobile` = #{mobile}
 
