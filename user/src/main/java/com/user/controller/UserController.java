@@ -5,6 +5,7 @@ import com.user.entity.User;
 import com.user.service.UserService;
 import com.user.utils.MessageUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.ognl.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -81,24 +82,25 @@ public class UserController{
                                 rtnmap.put("SMS","");
                                 rtnmap.put("why","");
                                 rtnmap.put("phone","");
-                                rtnmap.put("user",user);
+                                rtnmap.put("user","");
                                 return JSONObject.toJSONString(rtnmap);
                             }
                         }else{
+                            //用户登陆后生成token
+
                             HashMap<String, Object> rtnmap = new HashMap<>();
                             rtnmap.put("status","error");
                             rtnmap.put("msg","Null SMScode");
                             rtnmap.put("SMS","");
                             rtnmap.put("why","");
                             rtnmap.put("phone","");
-                            rtnmap.put("user",user);
+                            rtnmap.put("user","");
                             return JSONObject.toJSONString(rtnmap);
                         }
 
                 }else{//不要验证码验证 密码登录
                     System.err.println("不要验证码验证 密码登录");
                         //账户存在 需要判断
-                    System.out.println((new Date().getTime()-user.getActivetime().getTime()));
                         if (2592000000L<(new Date().getTime()-user.getActivetime().getTime())){//上次活跃时间大于一个月了
                             System.out.println("上次活跃时间大于一个月了，需要短信验证");
                             HashMap<String, Object> yzmmap = new HashMap<>();//发送短信验证码
@@ -166,6 +168,9 @@ public class UserController{
                                 user.setPwderrorcount(0);//更新密码错误次数为0
                                 userService.modifyUser(user);
                                 HashMap<String, Object> rtnmap = new HashMap<>();
+
+                                //用户登陆后生成token https://yq.aliyun.com/articles/594217
+                                //getToken(rtnmap,request);
                                 rtnmap.put("status","ok");
                                 rtnmap.put("msg","");
                                 rtnmap.put("SMS","");
@@ -314,6 +319,14 @@ public class UserController{
     }
 
 
+    /**
+     * 获取token
+     * @param request
+     * @return
+     */
+    private String getToken(Map params, HttpServletRequest request){
+        return "";
+    }
 
 
 }
