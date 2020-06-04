@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * Date:2020/6/2 16:47
  * Project:ACloud
  * package:com.user.filter
- *
+ *ip过滤 同一ip 最高每2秒一次访问
  * 过滤器讲解
  * https://blog.csdn.net/yuzhiqiang_1993/article/details/81288912
  */

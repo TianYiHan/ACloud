@@ -43,42 +43,39 @@ public class UserController{
      */   //where  `Mobile` = #{mobile} and `Password` = #{password}
     @PostMapping(value = "/login")
     public String login(@RequestParam Map params,HttpServletRequest request){
-
+        ValueOperations ops = stringRedisTemplate.opsForValue();//StringRedisTemplate 或者 RedisTemplate 工具类
         String mobile = String.valueOf(params.get("mobile"));//获取 手机  密码（明文）
         String password = String.valueOf(params.get("password"));//获取 手机  密码（明文）
-        String smscode = String.valueOf(params.get("smscode"));//获取验证码
         User user =null;
-        if (mobile!=null&&mobile!=""&&mobile.matches("1[3456789]\\d{9}$")&&password!=null||smscode!=null){//手机和密码输入判空
+        if (mobile!=null&&mobile!=""&&mobile.matches("1[3456789]\\d{9}$")&&password!=null){//手机和密码输入判空
             HashMap<String, String> map = new HashMap<>();
             map.put("mobile",mobile);
             user = userService.login(map);
             if (user!=null){
-                if (smscode!=null&&smscode!=""&&smscode!="null"&&!smscode.equals("null")){//验证码登录
-                        System.err.println(smscode);
-                        System.err.println("验证码登录");
-                        ValueOperations ops = stringRedisTemplate.opsForValue();//StringRedisTemplate 或者 RedisTemplate 工具类
+                if (password.length()==6){//验证码登录
                         String redisverificationcode = String.valueOf(ops.get(mobile));//去redis获取验证码
                         if (redisverificationcode!=null&&redisverificationcode!=""){
-                            if (redisverificationcode.equals(smscode)){//验证码输入正确，允许登录
-                                System.out.println("验证码输入正确，允许登录");
+                            if (redisverificationcode.equals(password)){//验证码输入正确，允许登录
                                 user.setActiveip(getIpAddress(request));//更新用户最后活跃ip
                                 user.setActivetime(new Date());//更新用户活跃时间信息
                                 user.setPwderrorcount(0);//更新密码错误次数为0
                                 userService.modifyUser(user);
                                 HashMap<String, Object> rtnmap = new HashMap<>();
+
+                                //用户登陆后生成token
                                 rtnmap.put("status","ok");
-                                rtnmap.put("msg","");
+                                rtnmap.put("msg","ok");
                                 rtnmap.put("SMS","");
                                 rtnmap.put("why","");
                                 rtnmap.put("phone","");
                                 rtnmap.put("user",user);
+                                rtnmap.put("usertoken","usertoken");
+                                ops.set(mobile,"Used", 1L, TimeUnit.SECONDS);//设置有效期 1秒
                                 return JSONObject.toJSONString(rtnmap);
                             }else {//验证码输入错误
-                                System.out.println("redis里获取到了 ,输入的不对");
-                                System.out.println("redis里的是："+redisverificationcode);
                                 HashMap<String, Object> rtnmap = new HashMap<>();
                                 rtnmap.put("status","error");
-                                rtnmap.put("msg","Wrong SMScode");
+                                rtnmap.put("msg","SMScodeWrong");
                                 rtnmap.put("SMS","");
                                 rtnmap.put("why","");
                                 rtnmap.put("phone","");
@@ -86,11 +83,9 @@ public class UserController{
                                 return JSONObject.toJSONString(rtnmap);
                             }
                         }else{
-                            //用户登陆后生成token
-
                             HashMap<String, Object> rtnmap = new HashMap<>();
                             rtnmap.put("status","error");
-                            rtnmap.put("msg","Null SMScode");
+                            rtnmap.put("msg","NullSMScode");
                             rtnmap.put("SMS","");
                             rtnmap.put("why","");
                             rtnmap.put("phone","");
@@ -99,47 +94,41 @@ public class UserController{
                         }
 
                 }else{//不要验证码验证 密码登录
-                    System.err.println("不要验证码验证 密码登录");
+
                         //账户存在 需要判断
                         if (2592000000L<(new Date().getTime()-user.getActivetime().getTime())){//上次活跃时间大于一个月了
-                            System.out.println("上次活跃时间大于一个月了，需要短信验证");
-                            HashMap<String, Object> yzmmap = new HashMap<>();//发送短信验证码
-                            yzmmap.put("mobile",mobile);//发送短信验证码
-                            yzmmap.put("why","longtime");//发送短信验证码
-                            getverificationCode(yzmmap,request);//发送短信验证码
+
+
+                            getverificationCode(mobile,request);//发送短信验证码
                             HashMap<String, Object> rtnmap = new HashMap<>();
                             rtnmap.put("status","error");
                             rtnmap.put("msg","longtime");
                             rtnmap.put("SMS","yes");
-                            rtnmap.put("why","longtime");
-                            rtnmap.put("phone",mobile.substring(7,11));
-                            rtnmap.put("user","");
-                            return JSONObject.toJSONString(rtnmap);//需要短信验证
-                        }else if (user.getPwderrorcount()>4){//密码错误大于5次
-                            System.out.println("密码错误大于5次，需要短信验证");
-                            HashMap<String, Object> yzmmap = new HashMap<>();//发送短信验证码
-                            yzmmap.put("mobile",mobile);//发送短信验证码
-                            yzmmap.put("why","manyerror");//发送短信验证码
-                            getverificationCode(yzmmap,request);//发送短信验证码
-                            HashMap<String, Object> rtnmap = new HashMap<>();
-                            rtnmap.put("status","error");
-                            rtnmap.put("msg","manyerror");
-                            rtnmap.put("SMS","yes");
-                            rtnmap.put("why","manyerror");
+                            rtnmap.put("why","长时间未登录");
                             rtnmap.put("phone",mobile.substring(7,11));
                             rtnmap.put("user","");
                             return JSONObject.toJSONString(rtnmap);//需要短信验证
                         }else if (!getIpAddress(request).equals(user.getActiveip())){//最后活跃ip和本次登录ip比较
-                            System.out.println("最后活跃ip和本次登录ip不一致，需要短信验证");
-                            HashMap<String, Object> yzmmap = new HashMap<>();//发送短信验证码
-                            yzmmap.put("mobile",mobile);//发送短信验证码
-                            yzmmap.put("why","newip");//发送短信验证码
-                            getverificationCode(yzmmap,request);//发送短信验证码
+
+
+                            getverificationCode(mobile,request);//发送短信验证码
                             HashMap<String, Object> rtnmap = new HashMap<>();
                             rtnmap.put("status","error");
                             rtnmap.put("msg","newip");
                             rtnmap.put("SMS","yes");
-                            rtnmap.put("why","newip");
+                            rtnmap.put("why","和上次访问IP不一致");
+                            rtnmap.put("phone",mobile.substring(7,11));
+                            rtnmap.put("user","");
+                            return JSONObject.toJSONString(rtnmap);//需要短信验证
+                        }else if (user.getPwderrorcount()>4){//密码错误大于5次
+
+
+                            getverificationCode(mobile,request);//发送短信验证码
+                            HashMap<String, Object> rtnmap = new HashMap<>();
+                            rtnmap.put("status","error");
+                            rtnmap.put("msg","manyerror");
+                            rtnmap.put("SMS","yes");
+                            rtnmap.put("why","密码累计错误次数过多");
                             rtnmap.put("phone",mobile.substring(7,11));
                             rtnmap.put("user","");
                             return JSONObject.toJSONString(rtnmap);//需要短信验证
@@ -157,7 +146,7 @@ public class UserController{
                                 rtnmap.put("status","error");
                                 rtnmap.put("msg","passworderror");
                                 rtnmap.put("SMS","");
-                                rtnmap.put("why","");
+                                rtnmap.put("why","密码输入错误");
                                 rtnmap.put("phone","");
                                 rtnmap.put("user","");
 
@@ -172,11 +161,13 @@ public class UserController{
                                 //用户登陆后生成token https://yq.aliyun.com/articles/594217
                                 //getToken(rtnmap,request);
                                 rtnmap.put("status","ok");
-                                rtnmap.put("msg","");
+                                rtnmap.put("msg","ok");
                                 rtnmap.put("SMS","");
                                 rtnmap.put("why","");
                                 rtnmap.put("phone","");
                                 rtnmap.put("user",user);
+                                rtnmap.put("usertoken","usertoken");
+                                ops.set(mobile,"Used", 1L, TimeUnit.SECONDS);//设置有效期 1秒
                                 return JSONObject.toJSONString(rtnmap);
                             }
                         }
@@ -196,19 +187,17 @@ public class UserController{
      * @date: Mon May 25 10:42:41 CST 2020
      */
     @PostMapping(value = "/getverificationCode")
-    public String getverificationCode(@RequestParam Map params, HttpServletRequest request){
-        String mobile = String.valueOf(params.get("mobile"));//获取手机
-        String why = String.valueOf(params.get("why"));//获取原因
+    public String getverificationCode(String mobile, HttpServletRequest request){
 
-        //why  = "Login"  "Registered" "RetrievePassword" 2020.06.01
 
-        if (why!=null&&why!=""&&mobile!=null&&mobile!=""&&mobile.matches("1[3456789]\\d{9}$")){
+        if (mobile!=null&&mobile!=""&&mobile.matches("1[3456789]\\d{9}$")){
             String yzm=String.valueOf(new Random().nextInt(999999 - 100000) + 100000);//生成6位随机数
             ValueOperations ops = stringRedisTemplate.opsForValue();//StringRedisTemplate 或者 RedisTemplate
             //发送短信
             //发送短信
+            System.out.println("手机："+mobile+"，验证码："+yzm);
             //发送短信
-            ops.set(mobile+why,yzm,300L,TimeUnit.SECONDS);//设置有效期 300秒  k,v   手机号码，验证码，有效期
+            ops.set(mobile,yzm,180L,TimeUnit.SECONDS);//设置有效期 300秒  k,v   手机号码，验证码，有效期
             return JSONObject.toJSONString("短信验证码已发送，有效期5分钟，请注意查收~");
         }else {
             System.out.println("参数有误！");
@@ -230,6 +219,10 @@ public class UserController{
         String password = String.valueOf(params.get("password"));//获取密码
         String verificationcode = String.valueOf(params.get("verificationcode"));//获取验证码
         if (mobile!=null&&mobile!=""&&password!=null&&password!=""&&verificationcode!=null&&verificationcode!=""){
+
+            if (password.length()<8){
+                return JSONObject.toJSONString("密码长度过低");
+            }
 
             String redisverificationcode = String.valueOf(ops.get(mobile));//去redis获取验证码
             if (redisverificationcode!=null&&redisverificationcode!=""){
