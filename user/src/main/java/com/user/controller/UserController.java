@@ -4,15 +4,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.user.entity.User;
 import com.user.service.UserService;
 import com.user.utils.MessageUtil;
+import com.user.utils.TokenUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.ognl.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.util.DigestUtils;
 import javax.servlet.http.HttpServletRequest;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,15 +60,20 @@ public class UserController{
                                 user.setPwderrorcount(0);//更新密码错误次数为0
                                 userService.modifyUser(user);
                                 HashMap<String, Object> rtnmap = new HashMap<>();
-
-                                //用户登陆后生成token
+                                HashMap<String, Object> tonekmap = new HashMap<>();
+                                tonekmap.put("CreatTonekIP",getIpAddress(request));
+                                tonekmap.put("usermobile",mobile);
+                                tonekmap.put("creatTime",new Date().getTime());
+                                tonekmap.put("Time",86400000L);//最大有效期
+                                String token=TokenUtil.createJWT(tonekmap,JSONObject.toJSONString(user),user.getMobile());
                                 rtnmap.put("status","ok");
                                 rtnmap.put("msg","ok");
                                 rtnmap.put("SMS","");
                                 rtnmap.put("why","");
                                 rtnmap.put("phone","");
                                 rtnmap.put("user",user);
-                                rtnmap.put("usertoken","usertoken");
+                                ops.set(token,token, 600L, TimeUnit.SECONDS);//设置有效期 10分钟，10分钟内操作没问题
+                                rtnmap.put("usertoken",token);
                                 ops.set(mobile,"Used", 1L, TimeUnit.SECONDS);//设置有效期 1秒
                                 return JSONObject.toJSONString(rtnmap);
                             }else {//验证码输入错误
@@ -94,11 +98,8 @@ public class UserController{
                         }
 
                 }else{//不要验证码验证 密码登录
-
                         //账户存在 需要判断
                         if (2592000000L<(new Date().getTime()-user.getActivetime().getTime())){//上次活跃时间大于一个月了
-
-
                             getverificationCode(mobile,request);//发送短信验证码
                             HashMap<String, Object> rtnmap = new HashMap<>();
                             rtnmap.put("status","error");
@@ -109,8 +110,6 @@ public class UserController{
                             rtnmap.put("user","");
                             return JSONObject.toJSONString(rtnmap);//需要短信验证
                         }else if (!getIpAddress(request).equals(user.getActiveip())){//最后活跃ip和本次登录ip比较
-
-
                             getverificationCode(mobile,request);//发送短信验证码
                             HashMap<String, Object> rtnmap = new HashMap<>();
                             rtnmap.put("status","error");
@@ -121,8 +120,6 @@ public class UserController{
                             rtnmap.put("user","");
                             return JSONObject.toJSONString(rtnmap);//需要短信验证
                         }else if (user.getPwderrorcount()>4){//密码错误大于5次
-
-
                             getverificationCode(mobile,request);//发送短信验证码
                             HashMap<String, Object> rtnmap = new HashMap<>();
                             rtnmap.put("status","error");
@@ -141,7 +138,6 @@ public class UserController{
                             if (!passwordmd5.equals(String.valueOf(user.getPassword()))){
                                 user.setPwderrorcount(user.getPwderrorcount()+1);
                                 userService.modifyUser(user);//密码错误次数+1
-
                                 HashMap<String, Object> rtnmap = new HashMap<>();
                                 rtnmap.put("status","error");
                                 rtnmap.put("msg","passworderror");
@@ -149,7 +145,6 @@ public class UserController{
                                 rtnmap.put("why","密码输入错误");
                                 rtnmap.put("phone","");
                                 rtnmap.put("user","");
-
                                 return JSONObject.toJSONString(rtnmap);
                             }else {//密码正确，更新活跃状态
                                 user.setActiveip(getIpAddress(request));//更新用户最后活跃ip
@@ -157,16 +152,20 @@ public class UserController{
                                 user.setPwderrorcount(0);//更新密码错误次数为0
                                 userService.modifyUser(user);
                                 HashMap<String, Object> rtnmap = new HashMap<>();
-
-                                //用户登陆后生成token https://yq.aliyun.com/articles/594217
-                                //getToken(rtnmap,request);
+                                HashMap<String, Object> tonekmap = new HashMap<>();
+                                tonekmap.put("CreatTonekIP",getIpAddress(request));
+                                tonekmap.put("usermobile",mobile);
+                                tonekmap.put("creatTime",new Date().getTime());
+                                tonekmap.put("Time",86400000L);
+                                String token=TokenUtil.createJWT(tonekmap,JSONObject.toJSONString(user),user.getMobile());
                                 rtnmap.put("status","ok");
                                 rtnmap.put("msg","ok");
                                 rtnmap.put("SMS","");
                                 rtnmap.put("why","");
                                 rtnmap.put("phone","");
                                 rtnmap.put("user",user);
-                                rtnmap.put("usertoken","usertoken");
+                                rtnmap.put("usertoken",token);
+                                ops.set(token,token, 600L, TimeUnit.SECONDS);//设置有效期 10分钟，10分钟内操作没问题
                                 ops.set(mobile,"Used", 1L, TimeUnit.SECONDS);//设置有效期 1秒
                                 return JSONObject.toJSONString(rtnmap);
                             }
@@ -219,18 +218,14 @@ public class UserController{
         String password = String.valueOf(params.get("password"));//获取密码
         String verificationcode = String.valueOf(params.get("verificationcode"));//获取验证码
         if (mobile!=null&&mobile!=""&&password!=null&&password!=""&&verificationcode!=null&&verificationcode!=""){
-
             if (password.length()<8){
-                return JSONObject.toJSONString("密码长度过低");
+                return JSONObject.toJSONString("PasswordLengthTooLow");
             }
-
             String redisverificationcode = String.valueOf(ops.get(mobile));//去redis获取验证码
             if (redisverificationcode!=null&&redisverificationcode!=""){
                 if (!redisverificationcode.equals(verificationcode)){
                     //用户输入错误
-                    System.out.println("redis里获取到了 ,输入的不对");
-                    System.out.println("redis里的是："+redisverificationcode);
-                    return JSONObject.toJSONString("Wrong smscode");
+                    return JSONObject.toJSONString("SMSERROR");
                 }else {
                     //盐=手机号码md5加密  盐存入数据库
                     String mobilemd5 = DigestUtils.md5DigestAsHex(mobile.getBytes());
@@ -254,22 +249,40 @@ public class UserController{
                     user.setIntroduce("暂无简介");//初始简介
                     user.setMoney(0);//用户初始金额
                     if (userService.addUser(user) == 1) {
+                        user.setActiveip(getIpAddress(request));//更新用户最后活跃ip
+                        user.setActivetime(new Date());//更新用户活跃时间信息
+                        user.setPwderrorcount(0);//更新密码错误次数为0
+                        userService.modifyUser(user);
+                        HashMap<String, Object> rtnmap = new HashMap<>();
+                        HashMap<String, Object> tonekmap = new HashMap<>();//授权给mobile用户在xxip上免登录 10分钟
+                        tonekmap.put("CreatTonekIP",getIpAddress(request));
+                        tonekmap.put("usermobile",mobile);
+                        tonekmap.put("creatTime",new Date().getTime());
+                        tonekmap.put("Time",86400000L);
+                        String token=TokenUtil.createJWT(tonekmap,JSONObject.toJSONString(user),user.getMobile());
+                        //用户登陆后生成token https://yq.aliyun.com/articles/594217
+                        //getToken(rtnmap,request);
+                        rtnmap.put("status","ok");
+                        rtnmap.put("msg","registeredok");
+                        rtnmap.put("SMS","");
+                        rtnmap.put("why","");
+                        rtnmap.put("phone","");
+                        rtnmap.put("user",user);
+                        rtnmap.put("usertoken",token);
+                        ops.set(token,token, 600L, TimeUnit.SECONDS);//设置有效期 10分钟，10分钟内操作没问题
                         ops.set(mobile,"Used", 1L, TimeUnit.SECONDS);//设置有效期 1秒
-                        return JSONObject.toJSONString("registered user success");
+                        return JSONObject.toJSONString(rtnmap);
                     }else{
-                        return JSONObject.toJSONString("registered user error");
+                        return JSONObject.toJSONString("registeredERROR");
                     }
                 }
             }else{
-                return JSONObject.toJSONString("null smscode");
+                return JSONObject.toJSONString("NULLsmscode");
             }
         }else {
-            return JSONObject.toJSONString("Wrong parameter");//参数错误
+            return JSONObject.toJSONString("WrongParameter");//参数错误
         }
     };
-
-
-
 
 
     /**
@@ -277,7 +290,7 @@ public class UserController{
      * @param request
      * @return
      */
-    private static String getIpAddress(HttpServletRequest request) {
+    private String getIpAddress(HttpServletRequest request) {
         String Xip = request.getHeader("X-Real-IP");
         String XFor = request.getHeader("X-Forwarded-For");
         if(StringUtils.isNotEmpty(XFor) && !"unKnown".equalsIgnoreCase(XFor)){
@@ -312,14 +325,7 @@ public class UserController{
     }
 
 
-    /**
-     * 获取token
-     * @param request
-     * @return
-     */
-    private String getToken(Map params, HttpServletRequest request){
-        return "";
-    }
+
 
 
 }
