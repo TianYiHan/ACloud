@@ -65,27 +65,7 @@ public class TokenFilter implements Filter {
             System.out.println("Request Header 缺少参数");
             return;
         }
-        Jws<Claims> claimsJws = Jwts.parser().//解析JWT
-                setSigningKey(new SecretKeySpec(moblie.getBytes(), SignatureAlgorithm.HS512.getJcaName()))
-                .parseClaimsJws(JWT);
-        if(allowedPath){//白名单,不需要token验证 直接放行
-            filterChain.doFilter(httpRequest, response);
-        }else if(getIpAddress(httpRequest)!=claimsJws.getHeader().get("CreatTonekIP")){//当前访问ip和token里的ip不一致 拦截
-                System.out.println("当前访问ip和token里的ip不一致 拦截 false");
-        }else if(new Date().getTime()-Integer.valueOf((Integer)claimsJws.getHeader().get("creatTime"))>Integer.valueOf((Integer)claimsJws.getHeader().get("Time"))){
-            //token里的最大有效期过了 拦截
-            System.out.println("token过了最大有效期");
-        }else if(claimsJws.getHeader().get("usermobile")!=moblie){
-            //token里的用户手机 和访问带的手机不一致
-            System.out.println("token里的手机号码和Request Header的参数不一致 ");
-        } else{
-            if (ops.get(JWT)!=null){//token没毛病 再续费10分钟
-                ops.set(JWT,JWT, 600L, TimeUnit.SECONDS);//续10分钟 10分钟不操作会被注销
-                filterChain.doFilter(httpRequest, response);
-            }else {
-                System.out.println("tonek不存在");
-            }
-        }
+
 
 
 
@@ -94,44 +74,6 @@ public class TokenFilter implements Filter {
     @Override
     public void destroy() {
 
-    }
-    /**
-     * 获取Ip地址
-     * @param request
-     * @return
-     */
-    private static String getIpAddress(HttpServletRequest request) {
-        String Xip = request.getHeader("X-Real-IP");
-        String XFor = request.getHeader("X-Forwarded-For");
-        if(StringUtils.isNotEmpty(XFor) && !"unKnown".equalsIgnoreCase(XFor)){
-            //多次反向代理后会有多个ip值，第一个ip才是真实ip
-            int index = XFor.indexOf(",");
-            if(index != -1){
-                return XFor.substring(0,index);
-            }else{
-                return XFor;
-            }
-        }
-        XFor = Xip;
-        if(StringUtils.isNotEmpty(XFor) && !"unKnown".equalsIgnoreCase(XFor)){
-            return XFor;
-        }
-        if (StringUtils.isBlank(XFor) || "unknown".equalsIgnoreCase(XFor)) {
-            XFor = request.getHeader("Proxy-Client-IP");
-        }
-        if (StringUtils.isBlank(XFor) || "unknown".equalsIgnoreCase(XFor)) {
-            XFor = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (StringUtils.isBlank(XFor) || "unknown".equalsIgnoreCase(XFor)) {
-            XFor = request.getHeader("HTTP_CLIENT_IP");
-        }
-        if (StringUtils.isBlank(XFor) || "unknown".equalsIgnoreCase(XFor)) {
-            XFor = request.getHeader("HTTP_X_FORWARDED_FOR");
-        }
-        if (StringUtils.isBlank(XFor) || "unknown".equalsIgnoreCase(XFor)) {
-            XFor = request.getRemoteAddr();
-        }
-        return XFor;
     }
 
 
