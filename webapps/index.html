@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="css/indexcss.css">
+<html id="html">
+	<head>
+		<meta charset="utf-8" />
+		<title>nalai</title>
+	</head>
+	<script src="js\jquery-3.4.1.min.js"></script>
+	<script src="js/layui-v2.5.6/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>
+	<script>
+		$(function(){
+			
+			$("body").click(function(){
+				if($('.novhidediv').is(":animated")){//动画状态中
+					
+				}else{　　//否则
+					$(".novhidediv").hide(100);
+				}
+			})
+			
+			$("#topul li:first").hover(function(){
+				$("#topul li").css("cursor","Pointer");
+				$("#topul li img").attr("src","img/indexhousehover.png")
+			},function(){
+				$("#topul li img").attr("src","img/indexhouse.png")
+				$("#topul li img").animate({src:"img/indexhouse.png"});
+			})
+			
+			$("#topulright li div div").hover(function(e){
+				$(this).css("cursor","Pointer");
+				$(this).removeClass("novlistDIVNoselect")
+				$(this).addClass("novlistDIVselect")
+				$(this).find("a").removeClass("novlistANoselect")
+				$(this).find("a").addClass("novlistAselect")
+			},function(e){
+				$(this).removeClass("novlistDIVselect")
+				$(this).addClass("novlistDIVNoselect")
+				$(this).find("a").removeClass("novlistAselect")
+				$(this).find("a").addClass("novlistANoselect")
+			})
+			
+			$("#userli>a").click(function(e){
+				$("#userli").find(".novhidediv").slideToggle(200);
+			})
+			$("#languageli>a").click(function(e){
+				$("#languageli").find(".novhidediv").slideToggle(200);
+			})
+			$("#msgli>a").click(function(e){
+				layer.tips('没有通知!', '#msgli>a',{ tips:[3,'#848484'],time:1000});
+			})
+			
+		})
+	</script>
+	<body>
+		<div id="top">
+			<div id="topcenter">
+				<a href="index.html" id="indexnalai">POMxml</a>
+				<ul id="topul">
+					<li><img src="img/indexhouse.png"></li>
+					<li>
+						<a href="">菜单111 </a>
+						<ul>
+							<li></li>
+						</ul>
+					</li>
+					<li>
+						<a href="">菜单222 </a>
+						<ul>
+							<li></li>
+						</ul>
+					</li>
+					<li><a href="">菜单333 </a></li>
+					<li><a href="">菜单444 </a></li>
+				</ul>
+				<ul id="topulright">
+					<!-- /////////////中文//////////////// -->
+					<li id="languageli">
+						<a href="#">
+							<span class="novspan">中文</span>
+							<img style="width: 18px; position: relative;top: 2px;left: -5px;" src="img/下.png" >
+						</a>
+						<div hidden="hidden"  class="novhidediv">
+							<div class="novlistDIVNoselect">
+								<a href="#" class="novlistANoselect">中文</a>
+							</div>
+							<div class="novlistDIVNoselect">
+								<a href="#" class="novlistANoselect">English</a>
+							</div>
+						</div>
+					</li>
+					<!-- //////////////用户/////////////// -->
+					<li id="userli">
+						<a href="#">
+							<img  width="18px" style=" position: relative; top: 2px;"   src="img/用户.png" >
+							<span class="novspan">我的账户</span>
+							<img style="width: 18px; position: relative;top: 2px;left: -5px;" src="img/下.png" >
+						</a>
+						<div hidden="hidden" style="width: 175px;" class="novhidediv">
+							<div class="novlistDIVNoselect">
+								<a href="#" class="novlistANoselect">用户登录</a>
+							</div>
+							<div class="novlistDIVNoselect">
+								<a href="#" class="novlistANoselect">账户注册</a>
+							</div>
+							<div class="novlistDIVNoselect">
+								<a href="#" class="novlistANoselect">忘记密码?</a>
+							</div>
+						</div>
+					</li>
+					<!-- //////////////通知/////////////// -->
+					<li id="msgli">
+						<a href="#" style="position: relative; top: -2px; left: -10px;">
+							<img  width="20px" style="position: relative;top: 4px;"  src="img/通知.png">
+							<span class="novspan">通知</span>
+						</a>
+					</li>
+					
+				</ul>
+			</div>
+		</div>
+		
+		<div id="body">
+			<div id="bodycenter">
+				bodycenter
+				<br><br>aasd<br>1<br>22<br>3<br>3<br>1<br>1<br>3<br>1<br>
+				<br><br>asd<br>1<br>22<br>3<br>3<br>1<br>1<br>3<br>1<br>
+				<br><br>asd<br>1<br>22<br>3<br>3<br>1<br>1<br>3<br>1<br>
+				<br><br>1a11<br>1<br>22<br>3<br>3<br>1<br>1<br>3<br>1<br>
+				<br><br>asd<br>1<br>22<br>3<br>3<br>1<br>1<br>3<br>1<br>
+			</div>
+		</div>
+		
+		<div id="bottom" >
+			<div id="bottomcenter">
+				bottomcenter
+				备案号
+				版权信息
+				xxxxxxxx
+			</div>
+		</div>
+	</body>
+</html>
