@@ -8,15 +8,23 @@
 	<script src="js\jquery-3.4.1.min.js"></script>
 	<script src="js/layui-v2.5.6/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>
 	<script>
+		function stoken(){
+			
+			if(false){
+				//去掉定时器
+				window.clearInterval(t1);
+			}else{
+				
+			}
+			
+			
+		}
 		$(function(){
 			
-			$("body").click(function(){
-				if($('.novhidediv').is(":animated")){//动画状态中
-					
-				}else{　　//否则
-					$(".novhidediv").hide(100);
-				}
-			})
+			var _token = window.setInterval("stoken()",3000);
+			
+			
+			$("body").click(function(){if($('.novhidediv').is(":animated")){}else{$(".novhidediv").hide(100);}})//关闭打开的 隐藏的div
 			
 			$("#topul li:first").hover(function(){
 				$("#topul li").css("cursor","Pointer");
