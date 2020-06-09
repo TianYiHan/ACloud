@@ -10,7 +10,9 @@
 	margin-left: 20px;
 	margin-right: 30px;
 }
-
+#topul>li>a>span{
+	color: #464646;
+}
 #topul li img{
 	position: relative;
 	top: -5px;

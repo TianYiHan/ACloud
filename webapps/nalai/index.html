@@ -26,13 +26,37 @@
 			
 			$("body").click(function(){if($('.novhidediv').is(":animated")){}else{$(".novhidediv").hide(100);}})//关闭打开的 隐藏的div
 			
-			$("#topul li:first").hover(function(){
+			$("#topulli1").hover(function(){
 				$("#topul li").css("cursor","Pointer");
-				$("#topul li img").attr("src","img/indeximg/indexhousehover.png")
+				$("#topulli1 img").attr("src","img/indeximg/首页 (1).png")
 			},function(){
-				$("#topul li img").attr("src","img/indeximg/indexhouse.png")
-				$("#topul li img").animate({src:"img/indeximg/indexhouse.png"});
+				$("#topulli1 img").attr("src","img/indeximg/首页.png")
 			})
+			$("#topulli2").hover(function(){
+				$("#topul li").css("cursor","Pointer");
+				$("#topulli2 img").attr("src","img/indeximg/查找 (1).png")
+			},function(){
+				$("#topulli2 img").attr("src","img/indeximg/查找.png")
+			})
+			$("#topulli3").hover(function(){
+				$("#topul li").css("cursor","Pointer");
+				$("#topulli3 img").attr("src","img/indeximg/上传 (1).png")
+			},function(){
+				$("#topulli3 img").attr("src","img/indeximg/上传.png")
+			})
+			$("#topulli4").hover(function(){
+				$("#topul li").css("cursor","Pointer");
+				$("#topulli4 img").attr("src","img/indeximg/留言评论 (1).png")
+			},function(){
+				$("#topulli4 img").attr("src","img/indeximg/留言评论.png")
+			})
+			$("#topulli5").hover(function(){
+				$("#topul li").css("cursor","Pointer");
+				$("#topulli5 img").attr("src","img/indeximg/关于我们 (1).png")
+			},function(){
+				$("#topulli5 img").attr("src","img/indeximg/关于我们.png")
+			})
+			
 			
 			$("#topulright li div div").hover(function(e){
 				$(this).css("cursor","Pointer");
@@ -110,25 +134,40 @@
 					</li>
 				</ul>
 				
-				<ul id="topul">
-					<li>
-						<a href="">菜单111 </a>
-						<ul>
-							<li></li>
-						</ul>
+				<ul  id="topul">
+					<li id="topulli1">
+						<a href="#">
+							<img style="width: 28px;" src="img/indeximg/首页.png" >
+							<span style="position: relative; bottom: 10px;">首页</span>
+						</a>
 					</li>
-					<li>
-						<a href="">菜单222 </a>
-						<ul>
-							<li></li>
-						</ul>
+					<li id="topulli2">
+						<a href="#">
+							<img style="width: 26px;position: relative;top: -3px;" src="img/indeximg/查找.png" >
+							<span style="position: relative; bottom: 8px;">查找代码</span>
+						</a>
 					</li>
-					<li>
-						<a href="">菜单333 </a>
+					<li id="topulli3">
+						<a href="#">
+							<img style="width: 26px;" src="img/indeximg/上传.png" >
+							<span style="position: relative; bottom: 8px;">上传代码</span>
+						</a>
 					</li>
-					<li>
-						<a href="">菜单444 </a>
+					
+					<li id="topulli4">
+						<a href="#">
+							<img style="width: 24px;position: relative;top: -1px;" src="img/indeximg/留言评论.png" >
+							<span style="position: relative; bottom: 6px;">留言评论</span>
+						</a>
 					</li>
+					
+					<li id="topulli5">
+						<a href="#">
+							<img style="width: 20px;position: relative;top: 0px;" src="img/indeximg/关于我们.png" >
+							<span style="position: relative; bottom: 2px;">关于本站</span>
+						</a>
+					</li>
+					
 				</ul>
 				
 				
