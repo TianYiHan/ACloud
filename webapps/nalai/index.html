@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <link rel="stylesheet" href="css/indexcss.css">
+
 <html id="html">
 	<head>
 		<meta charset="utf-8" />
@@ -32,7 +33,8 @@
 				$("#topulli1 img").attr("src","img/indeximg/首页 (1).png")
 				$("#topulli1>a>span").css("color","#1296db");
 			},function(){
-				$("#topulli1>a>span").css("color","#464646");
+				$("#topulli1>a>span").css("color","#707070");
+				$("#topulli1>a>span").css("font-size","16px");
 				$("#topulli1 img").attr("src","img/indeximg/首页.png")
 			})
 			$("#topulli2").hover(function(){
@@ -41,7 +43,7 @@
 				$("#topulli2>a>span").css("color","#1296db");
 			},function(){
 				$("#topulli2 img").attr("src","img/indeximg/查找.png")
-				$("#topulli2>a>span").css("color","#464646");
+				$("#topulli2>a>span").css("color","#707070");
 			})
 			$("#topulli3").hover(function(){
 				$("#topul li").css("cursor","Pointer");
@@ -49,7 +51,7 @@
 				$("#topulli3>a>span").css("color","#1296db");
 			},function(){
 				$("#topulli3 img").attr("src","img/indeximg/上传.png")
-				$("#topulli3>a>span").css("color","#464646");
+				$("#topulli3>a>span").css("color","#707070");
 			})
 			$("#topulli4").hover(function(){
 				$("#topul li").css("cursor","Pointer");
@@ -58,7 +60,7 @@
 				
 			},function(){
 				$("#topulli4 img").attr("src","img/indeximg/留言评论.png")
-				$("#topulli4>a>span").css("color","#464646");
+				$("#topulli4>a>span").css("color","#707070");
 			})
 			$("#topulli5").hover(function(){
 				$("#topul li").css("cursor","Pointer");
@@ -66,7 +68,7 @@
 				$("#topulli5>a>span").css("color","#1296db");
 			},function(){
 				$("#topulli5 img").attr("src","img/indeximg/关于我们.png")
-				$("#topulli5>a>span").css("color","#464646");
+				$("#topulli5>a>span").css("color","#707070");
 			})
 			
 			
@@ -142,7 +144,9 @@
 					</li>
 					<!-- //////////////logo/////////////// -->
 					<li style="float: left; position: absolute;top: 0px;">
-						<a href="index.html" id="indexnalai">POMxml</a>
+						<a href="index.html" id="indexnalai">
+							<img src="img/indeximg/logo.png" >
+						</a>
 					</li>
 				</ul>
 				
@@ -150,33 +154,33 @@
 					<li class="bottomline" id="topulli1">
 						<a href="#">
 							<img style="width: 28px;" src="img/indeximg/首页.png" >
-							<span style="position: relative; bottom: 10px;">首页</span>
+							<span style="position: relative; bottom: 10px; font-size: 16px;">首页</span>
 						</a>
 					</li>
 					<li class="bottomline"  id="topulli2">
 						<a href="#">
 							<img style="width: 26px;position: relative;top: -3px;" src="img/indeximg/查找.png" >
-							<span style="position: relative; bottom: 8px;">查找代码</span>
+							<span style="position: relative; bottom: 8px; font-size: 16px;">查找代码</span>
 						</a>
 					</li>
 					<li class="bottomline"  id="topulli3">
 						<a href="#">
-							<img style="width: 26px;" src="img/indeximg/上传.png" >
-							<span style="position: relative; bottom: 8px;">上传代码</span>
+							<img style="width: 26px;" src="img/indeximg/上传 h.png" >
+							<span style="position: relative; bottom: 8px; font-size: 16px;">上传代码</span>
 						</a>
 					</li>
 					
 					<li class="bottomline"  id="topulli4">
 						<a href="#">
 							<img style="width: 24px;position: relative;top: -1px;" src="img/indeximg/留言评论.png" >
-							<span style="position: relative; bottom: 6px;">留言评论</span>
+							<span style="position: relative; bottom: 6px; font-size: 16px;">留言评论</span>
 						</a>
 					</li>
 					
 					<li class="bottomline"  id="topulli5">
 						<a href="#">
 							<img style="width: 20px;position: relative;top: 0px;" src="img/indeximg/关于我们.png" >
-							<span style="position: relative; bottom: 2px;">关于本站</span>
+							<span style="position: relative; bottom: 2px; font-size: 16px;">关于本站</span>
 						</a>
 					</li>
 					
@@ -194,11 +198,26 @@
 		</div>
 		
 		<div id="bottom" >
-			<div id="bottomcenter">
-				<span>bottomcenter
-				备案号
-				版权信息
-				xxxxxxxx</span>
+			<div class="header">
+				<!--Waves Container-->
+				<div>
+					<svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+						<defs>
+							<path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+						</defs>
+						<g class="parallax">
+							<use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7" />
+							<use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
+							<use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
+							<use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
+						</g>
+					</svg>
+					
+				</div>
+				<!--Waves end-->
+			</div>
+			<div style="margin: 0 auto;height: 50px; width: 1200px;">
+				<p style="color: #3e5673;">版权所有 © 2020 POMxml. 保留所有权利</p>
 			</div>
 		</div>
 	</body>
