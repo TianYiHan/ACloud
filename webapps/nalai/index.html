@@ -28,10 +28,10 @@
 			
 			$("#topul li:first").hover(function(){
 				$("#topul li").css("cursor","Pointer");
-				$("#topul li img").attr("src","img/indexhousehover.png")
+				$("#topul li img").attr("src","img/indeximg/indexhousehover.png")
 			},function(){
-				$("#topul li img").attr("src","img/indexhouse.png")
-				$("#topul li img").animate({src:"img/indexhouse.png"});
+				$("#topul li img").attr("src","img/indeximg/indexhouse.png")
+				$("#topul li img").animate({src:"img/indeximg/indexhouse.png"});
 			})
 			
 			$("#topulright li div div").hover(function(e){
@@ -62,30 +62,12 @@
 	<body>
 		<div id="top">
 			<div id="topcenter">
-				<a href="index.html" id="indexnalai">POMxml</a>
-				<ul id="topul">
-					<li><img src="img/indexhouse.png"></li>
-					<li>
-						<a href="">菜单111 </a>
-						<ul>
-							<li></li>
-						</ul>
-					</li>
-					<li>
-						<a href="">菜单222 </a>
-						<ul>
-							<li></li>
-						</ul>
-					</li>
-					<li><a href="">菜单333 </a></li>
-					<li><a href="">菜单444 </a></li>
-				</ul>
-				<ul id="topulright">
-					<!-- /////////////中文//////////////// -->
+				<ul  id="topulright">
+					<!-- /////////////语言//////////////// -->
 					<li id="languageli">
 						<a href="#">
 							<span class="novspan">中文</span>
-							<img style="width: 18px; position: relative;top: 2px;left: -5px;" src="img/下.png" >
+							<img style="width: 18px; position: relative;top: 2px;left: -5px;" src="img/indeximg/下.png" >
 						</a>
 						<div hidden="hidden"  class="novhidediv">
 							<div class="novlistDIVNoselect">
@@ -99,9 +81,9 @@
 					<!-- //////////////用户/////////////// -->
 					<li id="userli">
 						<a href="#">
-							<img  width="18px" style=" position: relative; top: 2px;"   src="img/用户.png" >
+							<img  width="18px" style=" position: relative; top: 2px;"   src="img/indeximg/用户.png" >
 							<span class="novspan">我的账户</span>
-							<img style="width: 18px; position: relative;top: 2px;left: -5px;" src="img/下.png" >
+							<img style="width: 18px; position: relative;top: 2px;left: -5px;" src="img/indeximg/下.png" >
 						</a>
 						<div hidden="hidden" style="width: 175px;" class="novhidediv">
 							<div class="novlistDIVNoselect">
@@ -118,12 +100,38 @@
 					<!-- //////////////通知/////////////// -->
 					<li id="msgli">
 						<a href="#" style="position: relative; top: -2px; left: -10px;">
-							<img  width="20px" style="position: relative;top: 4px;"  src="img/通知.png">
+							<img  width="20px" style="position: relative;top: 4px;"  src="img/indeximg/通知.png">
 							<span class="novspan">通知</span>
 						</a>
 					</li>
-					
+					<!-- //////////////logo/////////////// -->
+					<li style="float: left; position: absolute;top: 0px;">
+						<a href="index.html" id="indexnalai">POMxml</a>
+					</li>
 				</ul>
+				
+				<ul id="topul">
+					<li>
+						<a href="">菜单111 </a>
+						<ul>
+							<li></li>
+						</ul>
+					</li>
+					<li>
+						<a href="">菜单222 </a>
+						<ul>
+							<li></li>
+						</ul>
+					</li>
+					<li>
+						<a href="">菜单333 </a>
+					</li>
+					<li>
+						<a href="">菜单444 </a>
+					</li>
+				</ul>
+				
+				
 			</div>
 		</div>
 		

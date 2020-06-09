@@ -17,7 +17,9 @@
 	width: 24px;
 }
 #topulright{
-	margin-top: 20px;
+	height: 60px;
+	padding-top: 20px;
+	padding-left: 0px;
 }
 #topulright li{
 	position: relative;
@@ -124,7 +126,7 @@ a{text-decoration: none;}/*a标签去掉下划线*/
 	margin: 0 auto;
     width: 1200px;
 	height: 100%;
-    background-color: #ffff7f;
+    background-color: #736f6e;
 }
 #bottomcenter{
 	margin: 0 auto;
