@@ -26,10 +26,11 @@
 			
 			$("body").click(function(){if($('.novhidediv').is(":animated")){}else{$(".novhidediv").hide(100);}})//关闭打开的 隐藏的div
 			
+			
 			$("#topulli1").hover(function(){
 				$("#topul li").css("cursor","Pointer");
 				$("#topulli1 img").attr("src","img/indeximg/首页 (1).png")
-				$("#topulli1>a>span").css("color","#368adb");
+				$("#topulli1>a>span").css("color","#1296db");
 			},function(){
 				$("#topulli1>a>span").css("color","#464646");
 				$("#topulli1 img").attr("src","img/indeximg/首页.png")
@@ -37,7 +38,7 @@
 			$("#topulli2").hover(function(){
 				$("#topul li").css("cursor","Pointer");
 				$("#topulli2 img").attr("src","img/indeximg/查找 (1).png")
-				$("#topulli2>a>span").css("color","#368adb");
+				$("#topulli2>a>span").css("color","#1296db");
 			},function(){
 				$("#topulli2 img").attr("src","img/indeximg/查找.png")
 				$("#topulli2>a>span").css("color","#464646");
@@ -45,7 +46,7 @@
 			$("#topulli3").hover(function(){
 				$("#topul li").css("cursor","Pointer");
 				$("#topulli3 img").attr("src","img/indeximg/上传 (1).png")
-				$("#topulli3>a>span").css("color","#368adb");
+				$("#topulli3>a>span").css("color","#1296db");
 			},function(){
 				$("#topulli3 img").attr("src","img/indeximg/上传.png")
 				$("#topulli3>a>span").css("color","#464646");
@@ -53,15 +54,16 @@
 			$("#topulli4").hover(function(){
 				$("#topul li").css("cursor","Pointer");
 				$("#topulli4 img").attr("src","img/indeximg/留言评论 (1).png")
-				$("#topulli4>a>span").css("color","#368adb");
-				$("#topulli4>a>span").css("color","#464646");
+				$("#topulli4>a>span").css("color","#1296db");
+				
 			},function(){
 				$("#topulli4 img").attr("src","img/indeximg/留言评论.png")
+				$("#topulli4>a>span").css("color","#464646");
 			})
 			$("#topulli5").hover(function(){
 				$("#topul li").css("cursor","Pointer");
 				$("#topulli5 img").attr("src","img/indeximg/关于我们 (1).png")
-				$("#topulli5>a>span").css("color","#368adb");
+				$("#topulli5>a>span").css("color","#1296db");
 			},function(){
 				$("#topulli5 img").attr("src","img/indeximg/关于我们.png")
 				$("#topulli5>a>span").css("color","#464646");
@@ -145,33 +147,33 @@
 				</ul>
 				
 				<ul  id="topul">
-					<li id="topulli1">
+					<li class="bottomline" id="topulli1">
 						<a href="#">
 							<img style="width: 28px;" src="img/indeximg/首页.png" >
 							<span style="position: relative; bottom: 10px;">首页</span>
 						</a>
 					</li>
-					<li id="topulli2">
+					<li class="bottomline"  id="topulli2">
 						<a href="#">
 							<img style="width: 26px;position: relative;top: -3px;" src="img/indeximg/查找.png" >
 							<span style="position: relative; bottom: 8px;">查找代码</span>
 						</a>
 					</li>
-					<li id="topulli3">
+					<li class="bottomline"  id="topulli3">
 						<a href="#">
 							<img style="width: 26px;" src="img/indeximg/上传.png" >
 							<span style="position: relative; bottom: 8px;">上传代码</span>
 						</a>
 					</li>
 					
-					<li id="topulli4">
+					<li class="bottomline"  id="topulli4">
 						<a href="#">
 							<img style="width: 24px;position: relative;top: -1px;" src="img/indeximg/留言评论.png" >
 							<span style="position: relative; bottom: 6px;">留言评论</span>
 						</a>
 					</li>
 					
-					<li id="topulli5">
+					<li class="bottomline"  id="topulli5">
 						<a href="#">
 							<img style="width: 20px;position: relative;top: 0px;" src="img/indeximg/关于我们.png" >
 							<span style="position: relative; bottom: 2px;">关于本站</span>
@@ -193,10 +195,10 @@
 		
 		<div id="bottom" >
 			<div id="bottomcenter">
-				bottomcenter
+				<span>bottomcenter
 				备案号
 				版权信息
-				xxxxxxxx
+				xxxxxxxx</span>
 			</div>
 		</div>
 	</body>
