@@ -236,6 +236,7 @@ public class UserController{
                         String token=TokenUtil.createJWT(tonekmap,JSONObject.toJSONString(user),user.getMobile());
                         //用户登陆后生成token https://yq.aliyun.com/articles/594217
                         //getToken(rtnmap,request);
+c
                         rtnmap.put("status","ok");
                         rtnmap.put("msg","registeredok");
                         rtnmap.put("SMS","");

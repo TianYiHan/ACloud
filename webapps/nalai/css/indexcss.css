@@ -36,11 +36,14 @@
 	position: absolute;
 	left: -60px;
 	top: 40px;
-	border-radius: 5px;
+	border-radius: 10px;
 	
 	border: solid 1px #c3c3c3;
-	box-shadow: 0 0 2px #d3d3d3;
+	box-shadow: 0 0 5px #d3d3d3;
 	width: 120px;
+}
+.novhidediv>div{
+	
 }
 
 
