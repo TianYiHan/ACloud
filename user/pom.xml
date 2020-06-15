@@ -20,10 +20,10 @@
     </properties>
 
     <dependencies>
-        <dependency><!--腾讯短信发送-->
-            <groupId>com.tencentcloudapi</groupId>
-            <artifactId>tencentcloud-sdk-java</artifactId>
-            <version>3.1.58</version><!-- 注：此处仅为示例版本号，请访问 https://mvnrepository.com/artifact/com.tencentcloudapi/tencentcloud-sdk-java 获取最新版本号并替换 -->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-core</artifactId>
+            <version>4.5.1</version>
         </dependency>
         <dependency><!--Spring Data Redis-->
             <groupId>org.springframework.boot</groupId>

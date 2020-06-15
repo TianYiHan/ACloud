@@ -14,7 +14,7 @@
 <script type="text/javascript">
 	$(function(){
 		//此script内写页面样式
-		$(".left").hide()
+		$(".left2").hide()
 		$("#login3input").hide();
 		$("#gologin").click(function(){
 			$("#login1input").val("")
@@ -65,6 +65,9 @@
 						layer.alert('密码输入错误~', {offset:['240px','40px']});
 					}
 					if(rtnData.SMS=="yes"){//需要验证码登录
+						
+						
+						
 						layer.alert('因为'+rtnData.why+'，您需要手机短信登录，已经向您的尾号'+rtnData.phone+'的手机发送了登录验证码，请输入验证码~', {offset:['240px','40px']});
 						$("#login2input").attr("type","text");
 						$("#login2input").val("");
@@ -90,7 +93,7 @@
 		})
 		
 		
-		$("#registered4button").click(function(){//获取验证码获取验证码获取验证码获取验证码获取验证码获取验证码获取验证码获取验证码获取验证码获取验证码
+		$("#registered4button").click(function(){//注册获取验注册证码获注册取验证码获取验证码获取验证注册码获取验证注册码获取验证码获取验证码获取验证码获取验证码获取验证码
 		var mobile = $("#registered1input").val();
 		if(!(/^1[3456789]\d{9}$/.test(mobile))){ layer.msg('请输入正确的手机号~', {offset:['260px','90px']}); return false; }
 		load=layer.load(2, {offset:['210px','160px']});
@@ -99,8 +102,12 @@
 		$.ajax({
 		 　　type: "post", //用POST方式传输
 		 　　dataType: "json", //数据格式:JSON
-		 　　url: 'http://localhost:8080/user/getverificationCode', //目标地址
-		　　 data: {"mobile":mobile},
+		 　　url: 'http://localhost:8080/user/getVcode', //目标地址
+		　　 data: {},
+			 beforeSend: function(request) {//添加请求头
+				request.setRequestHeader("mobile", mobile);
+				request.setRequestHeader("templateCode", "SMS_193140343");
+			 },
 		 　　success: function (rtnData){
 				layer.msg('发送成功！请查收~', {offset:['260px','90px']});
 				$("#registered4button").animate({"display":"none"},0);

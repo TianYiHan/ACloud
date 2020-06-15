@@ -5,7 +5,6 @@ import com.user.entity.User;
 import com.user.service.UserService;
 import com.user.utils.MessageUtil;
 import com.user.utils.TokenUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -15,8 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
 * Author:https://github.com/TianYiHan
@@ -52,7 +52,7 @@ public class UserController{
             user = userService.login(map);
             if (user!=null){
                 if (password.length()==6){//验证码登录
-                        String redisverificationcode = String.valueOf(ops.get(mobile));//去redis获取验证码
+                        String redisverificationcode = String.valueOf(ops.get(mobile+"SMS_193140345"));//去redis获取登录验证码
                         if (redisverificationcode!=null&&redisverificationcode!=""){
                             if (redisverificationcode.equals(password)){//验证码输入正确，允许登录
                                 user.setActiveip(MessageUtil.getIpAddress(request));//更新用户最后活跃ip
@@ -100,7 +100,6 @@ public class UserController{
                 }else{//不要验证码验证 密码登录
                         //账户存在 需要判断
                         if (2592000000L<(new Date().getTime()-user.getActivetime().getTime())){//上次活跃时间大于一个月了
-                            getverificationCode(mobile,request);//发送短信验证码
                             HashMap<String, Object> rtnmap = new HashMap<>();
                             rtnmap.put("status","error");
                             rtnmap.put("msg","longtime");
@@ -110,7 +109,6 @@ public class UserController{
                             rtnmap.put("user","");
                             return JSONObject.toJSONString(rtnmap);//需要短信验证
                         }else if (!MessageUtil.getIpAddress(request).equals(user.getActiveip())){//最后活跃ip和本次登录ip比较
-                            getverificationCode(mobile,request);//发送短信验证码
                             HashMap<String, Object> rtnmap = new HashMap<>();
                             rtnmap.put("status","error");
                             rtnmap.put("msg","newip");
@@ -120,7 +118,6 @@ public class UserController{
                             rtnmap.put("user","");
                             return JSONObject.toJSONString(rtnmap);//需要短信验证
                         }else if (user.getPwderrorcount()>4){//密码错误大于5次
-                            getverificationCode(mobile,request);//发送短信验证码
                             HashMap<String, Object> rtnmap = new HashMap<>();
                             rtnmap.put("status","error");
                             rtnmap.put("msg","manyerror");
@@ -129,7 +126,7 @@ public class UserController{
                             rtnmap.put("phone",mobile.substring(7,11));
                             rtnmap.put("user","");
                             return JSONObject.toJSONString(rtnmap);//需要短信验证
-                        }else {
+                        }else {//密码登录
                             //对比密码
                             //盐=手机号码md5加密  盐存入数据库
                             String mobilemd5 = DigestUtils.md5DigestAsHex(mobile.getBytes());
@@ -193,9 +190,14 @@ public class UserController{
         String verificationcode = String.valueOf(params.get("verificationcode"));//获取验证码
         if (mobile!=null&&mobile!=""&&password!=null&&password!=""&&verificationcode!=null&&verificationcode!=""){
             if (password.length()<8){
-                return JSONObject.toJSONString("PasswordLengthTooLow");
+                // 汉字的Unicode取值范围
+                String regex = "[\u4e00-\u9fa5]";
+                if (Pattern.compile(regex).matcher(password).find()){//密码包含中文
+                    return JSONObject.toJSONString("PasswordHasChinese");
+                }
+                return JSONObject.toJSONString("PasswordLengthTooLow");//密码长度过低
             }
-            String redisverificationcode = String.valueOf(ops.get(mobile));//去redis获取验证码
+            String redisverificationcode = String.valueOf(ops.get(mobile+"SMS_193140343"));//去redis获取注册验证码
             if (redisverificationcode!=null&&redisverificationcode!=""){
                 if (!redisverificationcode.equals(verificationcode)){
                     //用户输入错误
@@ -260,29 +262,30 @@ public class UserController{
 
 
     /**
-     * 获取验证码
+     * getVcode获取验证码
      * @author:https://github.com/TianYiHan
-     * @date: Mon May 25 10:42:41 CST 2020
+     * @date: 2020.6.12
+     * @return: String OK  OK is ok
      */
-    @PostMapping(value = "/getverificationCode")
-    public String getverificationCode(String mobile, HttpServletRequest request){
+    @PostMapping(value = "/getVcode")
+    public String getVcode(HttpServletRequest request){
+        String mobile = request.getHeader("monile");
+        String templateCode = request.getHeader("templateCode");
+        if (mobile!=null&&mobile!=""&&mobile.matches("1[3456789]\\d{9}$")&&templateCode!=null&&templateCode!=""){
+            ValueOperations ops = stringRedisTemplate.opsForValue();//StringRedisTemplate 或者 RedisTemplate 工具类
+            String Vcodelimit = String.valueOf(ops.get(mobile+"Vcodelimit"));//去redis获取
+            if (Vcodelimit!=null&&Vcodelimit!=""){
+                return "limiterror";
+            }else {
+                ops.set(mobile+"Vcodelimit",mobile+"Vcodelimit",60L,TimeUnit.SECONDS);//60秒只能获取一次验证码
+                return MessageUtil.sendMsg(mobile,templateCode);
+            }
 
-
-        if (mobile!=null&&mobile!=""&&mobile.matches("1[3456789]\\d{9}$")){
-            String yzm=String.valueOf(new Random().nextInt(999999 - 100000) + 100000);//生成6位随机数
-            ValueOperations ops = stringRedisTemplate.opsForValue();//StringRedisTemplate 或者 RedisTemplate
-            //发送短信
-            //发送短信
-            System.out.println("手机："+mobile+"，验证码："+yzm);
-            //发送短信
-            ops.set(mobile,yzm,180L,TimeUnit.SECONDS);//设置有效期 300秒  k,v   手机号码，验证码，有效期
-            return JSONObject.toJSONString("短信验证码已发送，有效期5分钟，请注意查收~");
         }else {
-            System.out.println("参数有误！");
-            return JSONObject.toJSONString("Wrong parameter");
+            return "pramserror";
         }
 
-    };
+    }
 
 
 
