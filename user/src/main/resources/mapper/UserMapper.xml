@@ -24,9 +24,7 @@
         `user`
         set
         <trim suffixOverrides=",">
-                <if test="id != null">
-                    id = #{id},
-                </if>
+
                 <if test="name != null">
                     name = #{name},
                 </if>
@@ -69,9 +67,9 @@
                 <if test="activeip != null">
                     activeip = #{activeip},
                 </if>
-            <if test="pwderrorcount != null">
-                pwderrorcount = #{pwderrorcount},
-            </if>
+                <if test="pwderrorcount != null">
+                    pwderrorcount = #{pwderrorcount},
+                </if>
                 <if test="imgaddress != null">
                     imgaddress = #{imgaddress},
                 </if>
@@ -80,7 +78,9 @@
                 </if>
         </trim>
         where
-        1=1
+        <if test="id != null">
+            id = #{id}
+        </if>
     </update>
 
     <!-- 查询信息 -->

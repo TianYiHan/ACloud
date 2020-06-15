@@ -71,6 +71,8 @@ public class UserServiceImpl implements UserService {
                 res=mapper.updateUser(bean);
             }
         } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
             //手动事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }

@@ -14,9 +14,9 @@
 	<script>
 		$(function(){
 			
+			console.log(window.localStorage.getItem("token"))
 			
 			$("body").click(function(){if($('.novhidediv').is(":animated")){}else{$(".novhidediv").hide(100);}})//关闭打开的 隐藏的div
-			
 			
 			$("#topulli1").hover(function(){
 				$("#topul li").css("cursor","Pointer");

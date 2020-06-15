@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 @WebFilter(urlPatterns = "/*", filterName = "tokenfilter")
 public class TokenFilter implements Filter {
     private static final Set<String> ALLOWED_PATHS = Collections.unmodifiableSet(new HashSet<>(
-            Arrays.asList("/user/login","/user/getverificationCode","/user/registered")));
+            Arrays.asList("/user/login","/user/getVcode","/user/registered")));
 
     private String filterName;
     @Autowired
@@ -59,11 +59,15 @@ public class TokenFilter implements Filter {
         String path = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length()).replaceAll("[/]+$", "");
         boolean allowedPath = ALLOWED_PATHS.contains(path);
         System.out.println("当前path:"+path);
-        String JWT=httpRequest.getHeader("JWT");
-        String moblie=httpRequest.getHeader("moblie");
-        if (JWT==null||moblie==null){
-            System.out.println("Request Header 缺少参数");
-            return;
+        if(!allowedPath){
+            String JWT=httpRequest.getHeader("JWT");
+            String moblie=httpRequest.getHeader("moblie");
+            if (JWT==null||moblie==null){
+                System.out.println("Request Header 缺少参数");
+                return;
+            }
+        }else {//白名单
+            filterChain.doFilter(httpRequest,response);
         }
 
 

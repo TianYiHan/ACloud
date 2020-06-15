@@ -46,9 +46,6 @@
 			 }else{
 				 if(password.length<8){ layer.msg('请输入正确的密码~', {offset:['260px','90px']});return false; }
 			 }
-			 
-				 
-			 
 			 $.ajax({
 			 	type: "post",
 			 	url: "http://localhost:8080/user/login",
@@ -60,16 +57,16 @@
 						window.localStorage.setItem("token",rtnData.usertoken);
 						layer.alert('用户名：'+rtnData.user.name+'登录成功！！~~', {offset:['240px','40px']});
 						window.location.href='index.html';
+						console.log(rtnData.usertoken)
 					}
 					if(rtnData.msg=="passworderror"){//密码错误
 						layer.alert('密码输入错误~', {offset:['240px','40px']});
 					}
 					if(rtnData.SMS=="yes"){//需要验证码登录
-						
-						
-						
-						layer.alert('因为'+rtnData.why+'，您需要手机短信登录，已经向您的尾号'+rtnData.phone+'的手机发送了登录验证码，请输入验证码~', {offset:['240px','40px']});
+						layer.alert('手机尾号'+rtnData.phone+'，因为'+rtnData.why+'，您需要短信验证，点击获取手机验证码~', {offset:['240px','40px']});
 						$("#login2input").attr("type","text");
+						$("#login2input").css("width","195px");
+					    $("#getvcodebutton").show()
 						$("#login2input").val("");
 						$("#login2input").attr("placeholder","请输入验证码~")
 					}
@@ -92,6 +89,35 @@
 			 })
 		})
 		
+		$("#getvcodebutton").click(function(){
+			var mobile = $("#login1input").val();
+			if(!(/^1[3456789]\d{9}$/.test(mobile))){ layer.msg('请输入正确的手机号~', {offset:['260px','90px']}); return false; }
+			load=layer.load(2, {offset:['210px','160px']});
+			//此处演示关闭
+			setTimeout(function(){ layer.closeAll('loading'); }, 1000);
+			$.ajax({
+			 　　type: "post", //用POST方式传输
+			 　　dataType: "json", //数据格式:JSON
+			 　　url: 'http://localhost:8080/user/getVcode', //目标地址 13815403900
+			     data: {"mobile":mobile,"templateCode":"SMS_193140345"},
+				 success: function (rtnData){
+					layer.msg('发送成功！请查收~', {offset:['260px','90px']});
+					$("#getvcodebutton").animate({"display":"none"},0);
+					$("#getvcodebutton").animate({"display":"block"},9500);
+					$("#getvcodebutton").attr('disabled',true);//禁用按钮 17615847225
+					var count=60
+					InterValObj=setInterval(function(){
+						$("#getvcodebutton").html("再次发送"+count);
+						count--;
+						if(count<0){
+							$("#getvcodebutton").attr('disabled',false);//启用按钮
+							$("#getvcodebutton").html("获取验证码");
+							clearInterval(InterValObj)
+						}
+					},1000)	
+				 }
+			 });
+		})
 		
 		$("#registered4button").click(function(){//注册获取验注册证码获注册取验证码获取验证码获取验证注册码获取验证注册码获取验证码获取验证码获取验证码获取验证码获取验证码
 		var mobile = $("#registered1input").val();
@@ -102,13 +128,9 @@
 		$.ajax({
 		 　　type: "post", //用POST方式传输
 		 　　dataType: "json", //数据格式:JSON
-		 　　url: 'http://localhost:8080/user/getVcode', //目标地址
-		　　 data: {},
-			 beforeSend: function(request) {//添加请求头
-				request.setRequestHeader("mobile", mobile);
-				request.setRequestHeader("templateCode", "SMS_193140343");
-			 },
-		 　　success: function (rtnData){
+		 　　url: 'http://localhost:8080/user/getVcode', //目标地址 13815403900
+		     data: {"mobile":mobile,"templateCode":"SMS_193140343"},
+			 success: function (rtnData){
 				layer.msg('发送成功！请查收~', {offset:['260px','90px']});
 				$("#registered4button").animate({"display":"none"},0);
 				$("#registered4button").animate({"display":"block"},9500);
@@ -154,7 +176,7 @@
 					
 					if(rtnData.msg=='registeredok'){
 						window.localStorage.setItem("usertoken",rtnData.usertoken);
-						
+						console.log(rtnData.usertoken)
 						layer.msg('注册成功~', {offset:['260px','90px']});
 						$(location).attr('href','index.html');
 					}
@@ -251,10 +273,13 @@
       <h4 class="animation a2">使用手机或者邮箱登入您的帐户</h4>
     </div>
     <div  id="loginform"  class="form" style="position: relative;">
-      <input id="login1input" maxlength="11" type="text" class="form-field animation a3" placeholder="手机号码/邮箱账号">
-      <input id="login2input" type="password" class="form-field animation a4" placeholder="密码">
+      <input id="login1input" maxlength="11" type="text" class="form-field animation a3" placeholder="手机号码/邮箱账号" value="17615847228">
+      <input id="login2input" type="password"  class="form-field animation a4" placeholder="密码">
+	  <button  id="getvcodebutton" class="animation a4"
+	  style="display: none; width: 85px; height: 42px; position: absolute;left: 200px;top: 78px;font-size: 10px;">获取验证码</button>
       <p><a href="#"  class="animation a5" >获取帮助</a></p>
       <button  id="loginbutton"  class="animation a6" style="margin-top: 40px;">登录</button>
+	  
     </div>
 	<p id="goregistered"  class="animation a6"   style="position: relative;top: 100px; text-align: center;margin-right: 80px;">
 		<a href="javascript:void(0)" style="text-decoration: none;color: #4a96f1;font-size: 14px;">没有账号？立即注册</a>

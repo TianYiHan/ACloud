@@ -162,6 +162,7 @@ public class User {
                 ", activeip='" + activeip + '\'' +
                 ", imgaddress='" + imgaddress + '\'' +
                 ", introduce='" + introduce + '\'' +
+                ", pwderrorcount=" + pwderrorcount +
                 '}';
     }
 

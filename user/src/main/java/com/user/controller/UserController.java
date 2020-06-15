@@ -30,6 +30,9 @@ import java.util.regex.Pattern;
 public class UserController{
 
     @Autowired
+    private MessageUtil messageUtil;
+
+    @Autowired
     private UserService userService;
 
     @Autowired
@@ -45,7 +48,7 @@ public class UserController{
         ValueOperations ops = stringRedisTemplate.opsForValue();//StringRedisTemplate 或者 RedisTemplate 工具类
         String mobile = String.valueOf(params.get("mobile"));//获取 手机  密码（明文）
         String password = String.valueOf(params.get("password"));//获取 手机  密码（明文）
-        User user =null;
+        User user = null;
         if (mobile!=null&&mobile!=""&&mobile.matches("1[3456789]\\d{9}$")&&password!=null){//手机和密码输入判空
             HashMap<String, String> map = new HashMap<>();
             map.put("mobile",mobile);
@@ -74,7 +77,7 @@ public class UserController{
                                 rtnmap.put("user",user);
                                 ops.set(token,token, 600L, TimeUnit.SECONDS);//设置有效期 10分钟，10分钟内操作没问题
                                 rtnmap.put("usertoken",token);
-                                ops.set(mobile,"Used", 1L, TimeUnit.SECONDS);//设置有效期 1秒
+                                ops.set(mobile+"SMS_193140345","Used", 1L, TimeUnit.SECONDS);//设置有效期 1秒
                                 return JSONObject.toJSONString(rtnmap);
                             }else {//验证码输入错误
                                 HashMap<String, Object> rtnmap = new HashMap<>();
@@ -133,8 +136,10 @@ public class UserController{
                             //排列密码+盐  然后MD5加密 存入数据库
                             String passwordmd5 = DigestUtils.md5DigestAsHex((password+mobilemd5).getBytes());
                             if (!passwordmd5.equals(String.valueOf(user.getPassword()))){
+                                System.out.println(user.toString());
                                 user.setPwderrorcount(user.getPwderrorcount()+1);
-                                userService.modifyUser(user);//密码错误次数+1
+                                System.err.println(user.toString());
+                                System.out.println(userService.modifyUser(user));//密码错误次数+1
                                 HashMap<String, Object> rtnmap = new HashMap<>();
                                 rtnmap.put("status","error");
                                 rtnmap.put("msg","passworderror");
@@ -198,6 +203,7 @@ public class UserController{
                 return JSONObject.toJSONString("PasswordLengthTooLow");//密码长度过低
             }
             String redisverificationcode = String.valueOf(ops.get(mobile+"SMS_193140343"));//去redis获取注册验证码
+            System.out.println("redis yzm:"+redisverificationcode);
             if (redisverificationcode!=null&&redisverificationcode!=""){
                 if (!redisverificationcode.equals(verificationcode)){
                     //用户输入错误
@@ -225,10 +231,6 @@ public class UserController{
                     user.setIntroduce("暂无简介");//初始简介
                     user.setMoney(0);//用户初始金额
                     if (userService.addUser(user) == 1) {
-                        user.setActiveip(MessageUtil.getIpAddress(request));//更新用户最后活跃ip
-                        user.setActivetime(new Date());//更新用户活跃时间信息
-                        user.setPwderrorcount(0);//更新密码错误次数为0
-                        userService.modifyUser(user);
                         HashMap<String, Object> rtnmap = new HashMap<>();
                         HashMap<String, Object> tonekmap = new HashMap<>();//授权给mobile用户在xxip上免登录 10分钟
                         tonekmap.put("CreatTonekIP",MessageUtil.getIpAddress(request));
@@ -268,21 +270,24 @@ public class UserController{
      * @return: String OK  OK is ok
      */
     @PostMapping(value = "/getVcode")
-    public String getVcode(HttpServletRequest request){
-        String mobile = request.getHeader("monile");
-        String templateCode = request.getHeader("templateCode");
+    public String getVcode(@RequestParam Map params,HttpServletRequest request){
+        String mobile = String.valueOf(params.get("mobile"));//获取手机
+        String templateCode = String.valueOf(params.get("templateCode"));//获取验证码类型
+        System.out.println(mobile);
+        System.out.println(templateCode);
         if (mobile!=null&&mobile!=""&&mobile.matches("1[3456789]\\d{9}$")&&templateCode!=null&&templateCode!=""){
             ValueOperations ops = stringRedisTemplate.opsForValue();//StringRedisTemplate 或者 RedisTemplate 工具类
-            String Vcodelimit = String.valueOf(ops.get(mobile+"Vcodelimit"));//去redis获取
-            if (Vcodelimit!=null&&Vcodelimit!=""){
-                return "limiterror";
+            String Vcodelimit = String.valueOf(ops.get(mobile+templateCode));//去redis获取
+            if (!Vcodelimit.equals("null")){
+                System.out.println("LimitError");
+                return JSONObject.toJSONString("LimitError");//60内发过一次了
             }else {
-                ops.set(mobile+"Vcodelimit",mobile+"Vcodelimit",60L,TimeUnit.SECONDS);//60秒只能获取一次验证码
-                return MessageUtil.sendMsg(mobile,templateCode);
+                ops.set(mobile+templateCode,"60秒只能获取一次验证码"+mobile+templateCode,60L,TimeUnit.SECONDS);//60秒只能获取一次验证码
+                return JSONObject.toJSONString(messageUtil.sendMsg(mobile,templateCode));
             }
 
         }else {
-            return "pramserror";
+            return JSONObject.toJSONString("PramsError");
         }
 
     }
