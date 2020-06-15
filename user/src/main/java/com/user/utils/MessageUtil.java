@@ -24,6 +24,7 @@ import com.aliyuncs.profile.DefaultProfile;
  * package:com.user.utils
  * 发送短信工具类
  */
+@Component
 public class MessageUtil {
 
     @Autowired
@@ -38,12 +39,13 @@ public class MessageUtil {
      * @yzm  6位数短信验证码
      * @TemplateCode 短信模板id
      * */
-    public static String sendMsg(String mobile,String TemplateCode){
+    public String sendMsg(String mobile,String TemplateCode){
 
-        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", "<accessKeyId>", "<accessSecret>");
+        System.out.println("sendMsg");
+        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", "ALTAI4G9quTnkG4X2UGJW2vVrZ", "AFeAFgAyctAU2vChZQe6OTpOcqp5Ld4Z");
         IAcsClient client = new DefaultAcsClient(profile);
         String Randomyzm=String.valueOf(new Random().nextInt(999999 - 100000) + 100000);//生成6位随机数
-
+        ValueOperations ops = stringRedisTemplate.opsForValue();//StringRedisTemplate 或者 RedisTemplate 工具类
         CommonRequest request = new CommonRequest();
         request.setSysMethod(MethodType.POST);
         request.setSysDomain("dysmsapi.aliyuncs.com");
@@ -57,6 +59,11 @@ public class MessageUtil {
         try {
             CommonResponse response = client.getCommonResponse(request);
             JSONObject jsonObject = JSONObject.parseObject(response.getData());
+            System.out.println(Randomyzm);
+            System.out.println(response.getData());
+            if (jsonObject.getString("Message").equals("OK")){//发送成功
+                ops.set(mobile+TemplateCode,Randomyzm,180L,TimeUnit.SECONDS);//60秒只能获取一次验证码
+            }
             return jsonObject.getString("Message");
             //{
             //	"Message": "OK",
