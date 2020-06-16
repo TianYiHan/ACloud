@@ -1,6 +1,7 @@
 package com.nalai.mapper;
 
 import com.nalai.entity.Codeinfo;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.Map;
 * Date:Fri May 22 09:15:27 CST 2020
 * 表注释:
 */
+@Component
 public interface CodeinfoMapper {
 
     /**

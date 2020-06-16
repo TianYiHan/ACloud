@@ -14,7 +14,7 @@
         <version>2.2.6.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-
+    <packaging>pom</packaging>
     <dependencies>
         <!--starter-->
         <dependency>
@@ -127,5 +127,7 @@
         <module>register</module>
         <module>user</module>
         <module>generator</module>
+        <module>aliyunoss</module>
+        <module>nalai</module>
     </modules>
 </project>
