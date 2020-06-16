@@ -9,11 +9,12 @@
 		<meta charset="utf-8" />
 		<title>POMxml</title>
 	</head>
-	<script src="js\jquery-3.4.1.min.js"></script>
+	<script src="js/jquery-3.4.1.min.js"></script>
 	<script src="js/layui-v2.5.6/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>
 	<script>
 		$(function(){
-			
+			//   /usr/local/nginx/html
+			//   /var/lib/jenkins/workspace/tianyi/webapps/html
 			console.log(window.localStorage.getItem("token"))
 			
 			$("body").click(function(){if($('.novhidediv').is(":animated")){}else{$(".novhidediv").hide(100);}})//关闭打开的 隐藏的div
@@ -59,7 +60,6 @@
 				$("#topulli5 img").attr("src","img/indeximg/关于我们.png")
 				$("#topulli5>a>span").css("color","#707070");
 			})
-			
 			
 			$("#topulright li div div").hover(function(e){
 				$(this).css("cursor","Pointer");
@@ -192,7 +192,7 @@
 			<div id="bodycenter">
 				<br>
 				<pre class="hljs" style="width: 1200px;"><code>/**
-* @author John Smith <john.smith@example.com>
+* @author John Smith john.smith@example.com>
 */
 package l2f.gameserver.model;
 
@@ -203,7 +203,7 @@ public abstract strictfp class L2Char extends L2Object {
 	public int moveTo(int x, int y, int z) {
 	_ai = null;
 	log("Should not be called");
-		if (1 > 5) { // wtf!?
+		if (1 == 5) { // wtf!?
 			return;
 		}
 	}
@@ -216,7 +216,7 @@ public abstract strictfp class L2Char extends L2Object {
 			<div class="header">
 				<!--Waves Container-->
 				<div>
-					<svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+					<svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28"  preserveAspectRatio="none" shape-rendering="auto">
 						<defs>
 							<path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
 						</defs>
