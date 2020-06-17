@@ -48,7 +48,7 @@
 			 }
 			 $.ajax({
 			 	type: "post",
-			 	url: "https://tianyi.ink:8090/user/login",
+			 	url: "http://106.14.208.219:8090/user/login",
 			 	data: {"mobile":mobile,"password":password},
 			 	dataType: "json",
 			 	success:function(rtnData){
@@ -98,7 +98,7 @@
 			$.ajax({
 			 　　type: "post", //用POST方式传输
 			 　　dataType: "json", //数据格式:JSON
-			 　　url: 'https://tianyi.ink:8090/user/getVcode', //目标地址 13815403900
+			 　　url: 'http://106.14.208.219:8090/user/getVcode', //目标地址 13815403900
 			     data: {"mobile":mobile,"templateCode":"SMS_193140345"},
 				 success: function (rtnData){
 					layer.msg('发送成功！请查收~', {offset:['260px','90px']});
@@ -128,7 +128,7 @@
 		$.ajax({
 		 　　type: "post", //用POST方式传输
 		 　　dataType: "json", //数据格式:JSON
-		 　　url: 'https://tianyi.ink:8090/user/getVcode', //目标地址 13815403900
+		 　　url: 'http://106.14.208.219:8090/user/getVcode', //目标地址 13815403900
 		     data: {"mobile":mobile,"templateCode":"SMS_193140343"},
 			 success: function (rtnData){
 				layer.msg('发送成功！请查收~', {offset:['260px','90px']});
@@ -169,7 +169,7 @@
 			// var btnregiser =$("#registered5input");
 			$.ajax({
 				type: "post",
-				url: "https://tianyi.ink:8090/user/registered",
+				url: "http://106.14.208.219:8090/user/registered",
 				data: {"mobile":mobile, "password":password, "verificationcode":verificationcode},
 				dataType: "json",
 				success:function(rtnData){

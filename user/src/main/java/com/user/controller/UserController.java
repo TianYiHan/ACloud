@@ -182,7 +182,7 @@ public class UserController{
     };
 
     /**
-     * registered注册  
+     * registered注册
      * @author:https://github.com/TianYiHan
      * @date: Mon May 25 10:42:41 CST 2020
      * @return: int
